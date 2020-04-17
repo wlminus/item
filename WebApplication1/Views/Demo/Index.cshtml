@@ -8,7 +8,7 @@
 <h2>Index</h2>
 
 <p>
-    <button type="submit" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-lg" id="openPopupCreate">
+    <button type="submit" class="btn btn-primary btn-sm" id="openPopup" data-toggle="modal" data-target="#modal-lg">
         Create New
     </button>
 </p>
@@ -36,15 +36,9 @@
                                         @Html.DisplayFor(modelItem => item.Age)
                                     </td>
                                     <td>
-                                        <button type="submit" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modal-lg" id="openPopupEdit">
-                                            Edit
-                                        </button>
-                                        <button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-lg" id="openPopupDetails">
-                                            Details
-                                        </button>
-                                        <button type="submit" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modal-lg" id="openPopupDelete">
-                                            Delete
-                                        </button>
+                                        <button type="submit" class="btn btn-default btn-sm openPopupEdit" data-toggle="modal" data-target="#modal-lg" value="@item.Id">Edit</button>
+                                        <button type="submit" class="btn btn-info btn-sm openPopupDetails" data-toggle="modal" data-target="#modal-lg" value="@item.Id">Details</button>
+                                        <button type="submit" class="btn btn-warning btn-sm openPopupDelete" data-toggle="modal" data-target="#modal-lg" value="@item.Id">Delete</button>
                                     </td>
                                 </tr>
                             }
@@ -61,33 +55,41 @@
 </section>
 <!-- /.content -->
 <!-- Content Wrapper. Contains page content -->
-<div id="myPopup">
+<div class="modal fade" id="modal-lg" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">User</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
 
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#openPopupCreate').ready(function () {
-                $('#myPopup').load('/Demo/Create')
-            })
-        })
-        $(document).ready(function () {
-            $('#openPopupEdit').click(function () {
-                $('#myPopup').load('/Demo/Edit/' + 1)
-            })
-        })
-        $(document).ready(function () {  
-            $('#openPopupDetails').click(function () {
-                $('#myPopup').load('/Demo/Details/' + 1)
-            })
-        })
-        $(document).ready(function () {
-            $('#openPopupDelete').click(function () {
-                $('#myPopup').load('/Demo/Delete/' + 1)
-            })
-        })
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $('#openPopup').click(function () {
+                $('.modal-body').load('/Demo/Create');
+            });
+            $('.openPopupEdit').click(function () {
+                $('.modal-body').load('/Demo/Edit/' + $(this).val());
+            });
+            $('.openPopupDetails').click(function () {
+                $('.modal-body').load('/Demo/Details/' + $(this).val());
+            });
+            $('.openPopupDelete').click(function () {
+                $('.modal-body').load('/Demo/Delete/' + $(this).val());
+            });
+        });
     </script>
 }
 
