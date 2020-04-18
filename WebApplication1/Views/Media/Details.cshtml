@@ -1,0 +1,67 @@
+﻿@model WebApplication1.Models.Media
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Media</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.House.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.House.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.Code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.Code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Room.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Room.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Media_Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Media_Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Media_Path)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Media_Path)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Media_size)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Media_size)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
