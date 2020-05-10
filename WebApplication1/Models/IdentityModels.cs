@@ -25,12 +25,12 @@ namespace WebApplication1.Models
         {
         }
 
-        public virtual DbSet<Demo> Demos { get; set; }
         public virtual DbSet<House> Houses { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<ItemCategory> ItemCategories { get; set; }
         public virtual DbSet<ItemStatus> ItemStatuses { get; set; }
-        public virtual DbSet<LocationCategory> LocationCategorys { get; set; }
+        public virtual DbSet<ItemInHouse> ItemInHouses { get; set; }
+        public virtual DbSet<ItemInRoom> ItemInRooms { get; set; }
         public virtual DbSet<Media> Medias { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }

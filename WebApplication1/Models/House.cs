@@ -18,19 +18,32 @@ namespace WebApplication1.Models
         [StringLength(500)]
         public string Location { get; set; }
 
-        [Column("Manage_Id")]
-        public int Manage_Id { get; set; }
+        [Column("District")]
+        [StringLength(500)]
+        public string District { get; set; }
+
+        [Column("Province")]
+        [StringLength(500)]
+        public string Province { get; set; }
+
+        [Column("Description")]
+        [StringLength(1000)]
+        public string Description { get; set; }
+
+        [Column("Room_Count")]
+        public long? Room_Count { get; set; }
+
+        [Column("Status")]
+        [StringLength(100)]
+        public string Status { get; set; }
 
         [Column("Rent_User_Id")]
-        public int Rent_User_Id { get; set; }
+        public int? Rent_User_Id { get; set; }
 
-        public virtual ICollection<Media> House_Media { get; set; }
+        public virtual ICollection<Media> Medias { get; set; }
 
         public virtual ICollection<Room> Rooms { get; set; }
 
-        public virtual ICollection<Item> Items { get; set; }
-
-        public int LocationCategoryId { get; set; }
-        public virtual LocationCategory LocationCategory { get; set; }
+        public virtual ICollection<ItemInHouse> Items { get; set; }
     }
 }

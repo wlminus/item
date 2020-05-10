@@ -168,35 +168,31 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\ItemCategoriesController.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
-    <Compile Include="Controllers\ItemStatusController.cs" />
-    <Compile Include="Controllers\LocationCategoriesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
-    <Compile Include="Controllers\RoomsController.cs" />
-    <Compile Include="Controllers\TransactionCategoriesController.cs" />
-    <Compile Include="Controllers\TransactionsController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004182304365_19042020_Create_Database.cs" />
-    <Compile Include="Migrations\202004182304365_19042020_Create_Database.Designer.cs">
-      <DependentUpon>202004182304365_19042020_Create_Database.cs</DependentUpon>
+    <Compile Include="Migrations\202005031447202_init.cs" />
+    <Compile Include="Migrations\202005031447202_init.Designer.cs">
+      <DependentUpon>202005031447202_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BaseEntity.cs" />
-    <Compile Include="Models\Demo.cs" />
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemCategory.cs" />
+    <Compile Include="Models\ItemInHouse.cs" />
+    <Compile Include="Models\ItemInRoom.cs" />
     <Compile Include="Models\ItemStatus.cs" />
-    <Compile Include="Models\LocationCategory.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Media.cs" />
     <Compile Include="Models\Room.cs" />
@@ -262,6 +258,7 @@
     <Content Include="Content\dist\js\pages\dashboard.js" />
     <Content Include="Content\dist\js\pages\dashboard2.js" />
     <Content Include="Content\dist\js\pages\dashboard3.js" />
+    <Content Include="Content\login.css" />
     <Content Include="Content\plugins\bootstrap\js\bootstrap.bundle.js" />
     <Content Include="Content\plugins\bootstrap\js\bootstrap.bundle.min.js" />
     <Content Include="Content\plugins\bootstrap\js\bootstrap.js" />
@@ -390,57 +387,31 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Demo\Create.cshtml" />
-    <Content Include="Views\Demo\Delete.cshtml" />
-    <Content Include="Views\Demo\Details.cshtml" />
-    <Content Include="Views\Demo\Edit.cshtml" />
-    <Content Include="Views\Demo\Index.cshtml" />
-    <Content Include="Views\Home\LeftSideBar.cshtml" />
+    <Content Include="Views\Shared\LeftSideBar.cshtml" />
     <Content Include="Views\Houses\Create.cshtml" />
     <Content Include="Views\Houses\Delete.cshtml" />
     <Content Include="Views\Houses\Details.cshtml" />
     <Content Include="Views\Houses\Edit.cshtml" />
     <Content Include="Views\Houses\Index.cshtml" />
-    <Content Include="Views\Items\Create.cshtml" />
-    <Content Include="Views\Items\Delete.cshtml" />
-    <Content Include="Views\Items\Details.cshtml" />
-    <Content Include="Views\Items\Edit.cshtml" />
-    <Content Include="Views\Items\Index.cshtml" />
-    <Content Include="Views\ItemCategories\Create.cshtml" />
-    <Content Include="Views\ItemCategories\Delete.cshtml" />
-    <Content Include="Views\ItemCategories\Details.cshtml" />
-    <Content Include="Views\ItemCategories\Edit.cshtml" />
-    <Content Include="Views\ItemCategories\Index.cshtml" />
-    <Content Include="Views\ItemStatus\Create.cshtml" />
-    <Content Include="Views\ItemStatus\Delete.cshtml" />
-    <Content Include="Views\ItemStatus\Details.cshtml" />
-    <Content Include="Views\ItemStatus\Edit.cshtml" />
-    <Content Include="Views\ItemStatus\Index.cshtml" />
-    <Content Include="Views\LocationCategories\Create.cshtml" />
-    <Content Include="Views\LocationCategories\Delete.cshtml" />
-    <Content Include="Views\LocationCategories\Details.cshtml" />
-    <Content Include="Views\LocationCategories\Edit.cshtml" />
-    <Content Include="Views\LocationCategories\Index.cshtml" />
     <Content Include="Views\Media\Create.cshtml" />
     <Content Include="Views\Media\Delete.cshtml" />
     <Content Include="Views\Media\Details.cshtml" />
     <Content Include="Views\Media\Edit.cshtml" />
     <Content Include="Views\Media\Index.cshtml" />
-    <Content Include="Views\Rooms\Create.cshtml" />
-    <Content Include="Views\Rooms\Delete.cshtml" />
-    <Content Include="Views\Rooms\Details.cshtml" />
-    <Content Include="Views\Rooms\Edit.cshtml" />
-    <Content Include="Views\Rooms\Index.cshtml" />
-    <Content Include="Views\TransactionCategories\Create.cshtml" />
-    <Content Include="Views\TransactionCategories\Delete.cshtml" />
-    <Content Include="Views\TransactionCategories\Details.cshtml" />
-    <Content Include="Views\TransactionCategories\Edit.cshtml" />
-    <Content Include="Views\TransactionCategories\Index.cshtml" />
-    <Content Include="Views\Transactions\Create.cshtml" />
-    <Content Include="Views\Transactions\Delete.cshtml" />
-    <Content Include="Views\Transactions\Details.cshtml" />
-    <Content Include="Views\Transactions\Edit.cshtml" />
-    <Content Include="Views\Transactions\Index.cshtml" />
+    <Content Include="Views\Home\Admin.cshtml" />
+    <Content Include="Views\ItemCategories\Create.cshtml" />
+    <Content Include="Views\ItemCategories\Delete.cshtml" />
+    <Content Include="Views\ItemCategories\Details.cshtml" />
+    <Content Include="Views\ItemCategories\Edit.cshtml" />
+    <Content Include="Views\ItemCategories\Index.cshtml" />
+    <Content Include="Views\Items\Create.cshtml" />
+    <Content Include="Views\Items\Delete.cshtml" />
+    <Content Include="Views\Items\Details.cshtml" />
+    <Content Include="Views\Items\Edit.cshtml" />
+    <Content Include="Views\Items\Index.cshtml" />
+    <Content Include="Views\Roles\Index.cshtml" />
+    <Content Include="Views\Roles\Create.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -459,8 +430,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004182304365_19042020_Create_Database.resx">
-      <DependentUpon>202004182304365_19042020_Create_Database.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005031447202_init.resx">
+      <DependentUpon>202005031447202_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

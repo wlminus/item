@@ -17,6 +17,5 @@ namespace WebApplication1.Models
         [Column("Description")]
         [StringLength(1000)]
         public string Description { get; set; }
-        public virtual ICollection<Item> Items { get; set; }
     }
 }

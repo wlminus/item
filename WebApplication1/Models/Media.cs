@@ -8,26 +8,25 @@ using System.Web;
 namespace WebApplication1.Models
 {
     [Table("Media")]
-    public class Media : BaseEntity
+    public class Media
     {
+        [Column("Id")]
+        public Guid Id { get; set; }
+
         [Column("Media_Name")]
-        [StringLength(255)]
+        [StringLength(1000)]
         public string Media_Name { get; set; }
 
-        [Column("Media_Path")]
-        [StringLength(500)]
-        public string Media_Path { get; set; }
+        [Column("Media_Extension")]
+        [StringLength(1000)]
+        public string Media_Extension { get; set; }
 
-        [Column("Media_size")]
-        public long Media_size { get; set; }
+        public virtual ICollection<House> Houses { get; set; }
 
-        public int HouseId { get; set; }
-        public virtual House House { get; set; }
+        public virtual ICollection<Room> Rooms { get; set; }
 
-        public int RoomId { get; set; }
-        public virtual Room Room { get; set; }
+        public virtual ICollection<ItemInHouse> ItemInHouses { get; set; }
 
-        public int ItemId { get; set; }
-        public virtual Item Item { get; set; }
+        public virtual ICollection<ItemInRoom> ItemInRooms { get; set; }
     }
 }

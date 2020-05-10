@@ -11,23 +11,30 @@ namespace WebApplication1.Models
     public class Transaction : BaseEntity
     {
         [Column("Date")]
-        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime? Date { get; set; }
+        public long Date { get; set; }
 
-        [Column("FromLocation")]
-        [StringLength(255)]
-        public string FromLocation { get; set; }
+        [Column("FromHouse")]
+        [StringLength(500)]
+        public string FromHouse { get; set; }
 
-        [Column("ToLocation")]
-        [StringLength(255)]
-        public string ToLocation { get; set; }
+        [Column("FromRoom")]
+        [StringLength(500)]
+        public string FromRoom { get; set; }
+
+        [Column("ToHouse")]
+        [StringLength(500)]
+        public string ToHouse { get; set; }
+
+        [Column("ToRoom")]
+        [StringLength(500)]
+        public string ToRoom { get; set; }
 
         [Column("FromStatus")]
-        [StringLength(255)]
+        [StringLength(500)]
         public string FromStatus { get; set; }
 
         [Column("ToStatus")]
-        [StringLength(255)]
+        [StringLength(500)]
         public string ToStatus { get; set; }
 
         [Column("IsVerified")]

@@ -31,14 +31,5 @@ namespace WebApplication1.Models
 
         public int ItemCategoryId { get; set; }
         public virtual ItemCategory ItemCategory { get; set; }
-
-        public int StatusId { get; set; }
-        public virtual ItemStatus Status { get; set; }
-
-        public virtual ICollection<Media>  Thumbnail { get; set; }
-
-        public virtual ICollection<Room> Rooms { get; set; }
-
-        public virtual ICollection<House> Houses { get; set; }
     }
 }

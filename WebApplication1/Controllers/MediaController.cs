@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -17,12 +18,16 @@ namespace WebApplication1.Controllers
         // GET: Media
         public ActionResult Index()
         {
-            var medias = db.Medias.Include(m => m.House).Include(m => m.Item).Include(m => m.Room);
-            return View(medias.ToList());
+            return View(db.Medias.ToList());
+        }
+
+        public FileResult Files(String p, String d)
+        {
+            return File(Path.Combine(Server.MapPath("~/App_Data/Upload/"), p), System.Net.Mime.MediaTypeNames.Application.Octet, d);
         }
 
         // GET: Media/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(Guid? id)
         {
             if (id == null)
             {
@@ -39,9 +44,6 @@ namespace WebApplication1.Controllers
         // GET: Media/Create
         public ActionResult Create()
         {
-            ViewBag.HouseId = new SelectList(db.Houses, "Id", "Name");
-            ViewBag.ItemId = new SelectList(db.Items, "Id", "Code");
-            ViewBag.RoomId = new SelectList(db.Rooms, "Id", "Name");
             return View();
         }
 
@@ -50,23 +52,21 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Media_Name,Media_Path,Media_size,HouseId,RoomId,ItemId")] Media media)
+        public ActionResult Create([Bind(Include = "Id,Media_Name,Media_Extension")] Media media)
         {
             if (ModelState.IsValid)
             {
+                media.Id = Guid.NewGuid();
                 db.Medias.Add(media);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.HouseId = new SelectList(db.Houses, "Id", "Name", media.HouseId);
-            ViewBag.ItemId = new SelectList(db.Items, "Id", "Code", media.ItemId);
-            ViewBag.RoomId = new SelectList(db.Rooms, "Id", "Name", media.RoomId);
             return View(media);
         }
 
         // GET: Media/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(Guid? id)
         {
             if (id == null)
             {
@@ -77,9 +77,6 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.HouseId = new SelectList(db.Houses, "Id", "Name", media.HouseId);
-            ViewBag.ItemId = new SelectList(db.Items, "Id", "Code", media.ItemId);
-            ViewBag.RoomId = new SelectList(db.Rooms, "Id", "Name", media.RoomId);
             return View(media);
         }
 
@@ -88,7 +85,7 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Media_Name,Media_Path,Media_size,HouseId,RoomId,ItemId")] Media media)
+        public ActionResult Edit([Bind(Include = "Id,Media_Name,Media_Extension")] Media media)
         {
             if (ModelState.IsValid)
             {
@@ -96,14 +93,11 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.HouseId = new SelectList(db.Houses, "Id", "Name", media.HouseId);
-            ViewBag.ItemId = new SelectList(db.Items, "Id", "Code", media.ItemId);
-            ViewBag.RoomId = new SelectList(db.Rooms, "Id", "Name", media.RoomId);
             return View(media);
         }
 
         // GET: Media/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(Guid? id)
         {
             if (id == null)
             {
@@ -120,7 +114,7 @@ namespace WebApplication1.Controllers
         // POST: Media/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(Guid id)
         {
             Media media = db.Medias.Find(id);
             db.Medias.Remove(media);

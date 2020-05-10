@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -17,8 +18,7 @@ namespace WebApplication1.Controllers
         // GET: Houses
         public ActionResult Index()
         {
-            var houses = db.Houses.Include(h => h.LocationCategory);
-            return View(houses.ToList());
+            return View(db.Houses.ToList());
         }
 
         // GET: Houses/Details/5
@@ -39,7 +39,6 @@ namespace WebApplication1.Controllers
         // GET: Houses/Create
         public ActionResult Create()
         {
-            ViewBag.LocationCategoryId = new SelectList(db.LocationCategorys, "Id", "Name");
             return View();
         }
 
@@ -48,16 +47,39 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Location,Manage_Id,Rent_User_Id,LocationCategoryId")] House house)
+        public ActionResult Create([Bind(Include = "Id,Name,Location,District,Province,Description,Room_Count,Status,Rent_User_Id")] House house)
         {
             if (ModelState.IsValid)
             {
+                List<Media> medias = new List<Media>();
+                for (int i = 0; i < Request.Files.Count; i++)
+                {
+                    var file = Request.Files[i];
+
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        Media fileDetail = new Media()
+                        {
+                            Media_Name = fileName,
+                            Media_Extension = Path.GetExtension(fileName),
+                            Id = Guid.NewGuid()
+                        };
+                        medias.Add(fileDetail);
+
+                        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                        file.SaveAs(path);
+                    }
+                }
+
+                house.Medias = medias;
+                house.Room_Count = 0;
+
                 db.Houses.Add(house);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.LocationCategoryId = new SelectList(db.LocationCategorys, "Id", "Name", house.LocationCategoryId);
             return View(house);
         }
 
@@ -68,12 +90,11 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            House house = db.Houses.Find(id);
+            House house = db.Houses.Include(s => s.Medias).SingleOrDefault(x => x.Id == id);
             if (house == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.LocationCategoryId = new SelectList(db.LocationCategorys, "Id", "Name", house.LocationCategoryId);
             return View(house);
         }
 
@@ -82,7 +103,7 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Location,Manage_Id,Rent_User_Id,LocationCategoryId")] House house)
+        public ActionResult Edit([Bind(Include = "Id,Name,Location,District,Province,Description,Room_Count,Status,Rent_User_Id")] House house)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +111,6 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.LocationCategoryId = new SelectList(db.LocationCategorys, "Id", "Name", house.LocationCategoryId);
             return View(house);
         }
 

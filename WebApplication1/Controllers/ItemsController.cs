@@ -17,7 +17,7 @@ namespace WebApplication1.Controllers
         // GET: Items
         public ActionResult Index()
         {
-            var items = db.Items.Include(i => i.ItemCategory).Include(i => i.Status);
+            var items = db.Items.Include(i => i.ItemCategory);
             return View(items.ToList());
         }
 
@@ -40,7 +40,6 @@ namespace WebApplication1.Controllers
         public ActionResult Create()
         {
             ViewBag.ItemCategoryId = new SelectList(db.ItemCategories, "Id", "Name");
-            ViewBag.StatusId = new SelectList(db.ItemStatuses, "Id", "Status");
             return View();
         }
 
@@ -49,7 +48,7 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Code,Name,Description,Brand,Price,ItemCategoryId,StatusId")] Item item)
+        public ActionResult Create([Bind(Include = "Id,Code,Name,Description,Brand,Price,ItemCategoryId")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -59,7 +58,6 @@ namespace WebApplication1.Controllers
             }
 
             ViewBag.ItemCategoryId = new SelectList(db.ItemCategories, "Id", "Name", item.ItemCategoryId);
-            ViewBag.StatusId = new SelectList(db.ItemStatuses, "Id", "Status", item.StatusId);
             return View(item);
         }
 
@@ -76,7 +74,6 @@ namespace WebApplication1.Controllers
                 return HttpNotFound();
             }
             ViewBag.ItemCategoryId = new SelectList(db.ItemCategories, "Id", "Name", item.ItemCategoryId);
-            ViewBag.StatusId = new SelectList(db.ItemStatuses, "Id", "Status", item.StatusId);
             return View(item);
         }
 
@@ -85,7 +82,7 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Code,Name,Description,Brand,Price,ItemCategoryId,StatusId")] Item item)
+        public ActionResult Edit([Bind(Include = "Id,Code,Name,Description,Brand,Price,ItemCategoryId")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -94,7 +91,6 @@ namespace WebApplication1.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.ItemCategoryId = new SelectList(db.ItemCategories, "Id", "Name", item.ItemCategoryId);
-            ViewBag.StatusId = new SelectList(db.ItemStatuses, "Id", "Status", item.StatusId);
             return View(item);
         }
 

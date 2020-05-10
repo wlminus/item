@@ -21,7 +21,7 @@ namespace WebApplication1.Models
         [Column("Rent_User_Id")]
         public int Rent_User_Id { get; set; }
 
-        public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<ItemInRoom> Items { get; set; }
 
         public virtual ICollection<House> Houses { get; set; }
 
