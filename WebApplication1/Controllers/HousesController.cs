@@ -28,12 +28,65 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            House house = db.Houses.Find(id);
+            House house = db.Houses
+                .Include(h => h.Medias)
+                .Include(h => h.Rooms).Where(h => h.Id == id).SingleOrDefault();
+            var itemInHouseList = db.ItemInHouses
+                .Include(i => i.Medias)
+                .Include(i => i.Item)
+                .Include(i => i.House).Where(i => i.HouseId == id).ToList();
+            house.Items = itemInHouseList;
+            HouseViewModel viewModel = new HouseViewModel(house);
             if (house == null)
             {
                 return HttpNotFound();
             }
-            return View(house);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddRoom([Bind(Include = "Id,RoomName,RoomType")] HouseViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                //List<Media> medias = new List<Media>();
+                //for (int i = 0; i < Request.Files.Count; i++)
+                //{
+                //    var file = Request.Files[i];
+
+                //    if (file != null && file.ContentLength > 0)
+                //    {
+                //        var fileName = Path.GetFileName(file.FileName);
+                //        Media fileDetail = new Media()
+                //        {
+                //            Media_Name = fileName,
+                //            Media_Extension = Path.GetExtension(fileName),
+                //            Id = Guid.NewGuid()
+                //        };
+                //        medias.Add(fileDetail);
+
+                //        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                //        file.SaveAs(path);
+                //    }
+                //}
+
+                Room room = new Room
+                {
+                    Name = viewModel.RoomName,
+                    Type = viewModel.RoomType
+                };
+
+                db.Rooms.Add(room);
+                db.SaveChanges();
+                //house.Medias = medias;
+                //house.Room_Count = 0;
+
+                //db.Houses.Add(house);
+                //db.SaveChanges();
+                return RedirectToAction("Detail");
+            }
+            return RedirectToAction("Detail");
         }
 
         // GET: Houses/Create

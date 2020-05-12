@@ -179,14 +179,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005031447202_init.cs" />
-    <Compile Include="Migrations\202005031447202_init.Designer.cs">
-      <DependentUpon>202005031447202_init.cs</DependentUpon>
+    <Compile Include="Migrations\202005101812182_init.cs" />
+    <Compile Include="Migrations\202005101812182_init.Designer.cs">
+      <DependentUpon>202005101812182_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BaseEntity.cs" />
     <Compile Include="Models\House.cs" />
+    <Compile Include="Models\HouseViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemCategory.cs" />
@@ -412,6 +413,12 @@
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\Create.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Account\Delete.cshtml" />
+    <Content Include="Views\Account\Edit.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Account\UserRoles.cshtml" />
+    <Content Include="Views\Houses\AddRoom.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -430,8 +437,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202005031447202_init.resx">
-      <DependentUpon>202005031447202_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005101812182_init.resx">
+      <DependentUpon>202005101812182_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

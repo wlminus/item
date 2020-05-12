@@ -1,82 +1,135 @@
-﻿@model WebApplication1.Models.House
+﻿@model WebApplication1.Models.HouseViewModel
 
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2>Thông tin chi tiết</h2>
 
-<div>
-    <h4>House</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Location)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.District)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.District)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Province)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Province)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Room_Count)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Room_Count)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Rent_User_Id)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Rent_User_Id)
-        </dd>
-
-    </dl>
+<h4>Thông tin chung</h4>
+<hr />
+<div class="row">
+    <div class="col-6">
+        @if (Model.Medias.Count > 0)
+        {
+            foreach (var item in Model.Medias)
+            {
+                <img class="house-img" src="~/Media/Files/?p=@(item.Id + item.Media_Extension)&d=@item.Media_Name" />
+            }
+        }
+        else
+        {
+            <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+        }
+    </div>
+    <div class="col-6">
+        <p>
+            Tên: @Model.Name
+        </p>
+        <p>
+            Địa chỉ: @Model.Location
+        </p>
+        <p>
+            Quận/Huyện: @Model.District
+        </p>
+        <p>
+            Tỉnh: @Model.Province
+        </p>
+        <p>
+            Chi tiết: @Model.Description
+        </p>
+        <p>
+            Số phòng: @Model.Room_Count
+        </p>
+        <p>
+            Trạng thái: @Model.Status
+        </p>
+    </div>
 </div>
+
+
+<h4>Thông tin phòng</h4>
+<a class="btn btn-primary" href="@Url.Action("AddRoom", "Houses")">Thêm mới</a>
+<hr />
+<div class="row"></div>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#roomModal">
+    Thêm mới phòng
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+       
+        <div class="modal-content">
+            @using (Html.BeginForm("AddRoom", "Houses", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới phòng trọ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-4">
+                            <h4>Ảnh</h4>
+                            <div class="row">
+                                <div class="col-8">
+                                    <input class="media-img form-control" type="file" name="files" multiple />
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" class="clear-media btn btn-warning right">Xóa hết</button>
+                                </div>
+                            </div>
+
+                            <div class="preview">
+
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <h4>Thông tin</h4>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.RoomName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.RoomName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.RoomName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.RoomType, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.RoomType, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.RoomType, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Create" class="btn btn-default" />
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+             }
+        </div>
+    </div>
+</div>
+
+
+<h4>Thông tin đồ trong nhà</h4>
+<a class="btn btn-primary" href="@Url.Action("AddItem", "Houses")">Thêm mới</a>
+<hr />
+<div class="row"></div>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")

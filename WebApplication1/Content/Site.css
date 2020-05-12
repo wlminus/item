@@ -36,3 +36,8 @@
 .house-content {
     padding-top: 15px;
 }
+
+.house-img {
+    max-width: 100%;
+    margin-bottom: 15px;
+}
