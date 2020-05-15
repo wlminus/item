@@ -187,9 +187,13 @@ namespace WebApplication1.Migrations
                         LockoutEnabled = c.Boolean(nullable: false),
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
+                        Discriminator = c.String(nullable: false, maxLength: 128),
+                        Avatar_Id = c.Guid(),
                     })
                 .PrimaryKey(t => t.Id)
-                .Index(t => t.UserName, unique: true, name: "UserNameIndex");
+                .ForeignKey("dbo.Media", t => t.Avatar_Id)
+                .Index(t => t.UserName, unique: true, name: "UserNameIndex")
+                .Index(t => t.Avatar_Id);
             
             CreateTable(
                 "dbo.AspNetUserClaims",
@@ -288,6 +292,7 @@ namespace WebApplication1.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUsers", "Avatar_Id", "dbo.Media");
             DropForeignKey("dbo.Transaction", "TransactionCategoryId", "dbo.TransactionCategory");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.ItemInHouse", "StatusId", "dbo.ItemStatus");
@@ -319,6 +324,7 @@ namespace WebApplication1.Migrations
             DropIndex("dbo.MediaHouses", new[] { "Media_Id" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
+            DropIndex("dbo.AspNetUsers", new[] { "Avatar_Id" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.Transaction", new[] { "TransactionCategoryId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });

@@ -1,0 +1,81 @@
+﻿@model WebApplication1.Models.RegisterModel
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Tạo mới người dùng</h2>
+
+@using (Html.BeginForm("Create", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Avatar</h4>
+            <div class="row">
+                <div class="col-8">
+                    <input class="media-img form-control" type="file" name="files" />
+                </div>
+                <div class="col-4">
+                    <button type="button" class="clear-media btn btn-warning right">Xóa</button>
+                </div>
+            </div>
+
+            <div class="preview">
+
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h4>Thông tin</h4>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="Email">Email</label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="FirstName">Tên</label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="LastName">Họ</label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="Password">Mật khẩu</label>
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="ConfirmPassword">Nhập lại mật khẩu</label>
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group row">
+        <div class="col-4"></div>
+        <div class="col-6">
+            @Html.ActionLink("Trở về", "Index", null, new { @class = "btn btn-secondary" })
+            <input type="submit" class="btn btn-primary" value="Thêm" />
+        </div>
+        <div class="col-2"></div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -3,28 +3,26 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Available Roles For Application</h2>
+<h2>Danh sách vai trò</h2>
 
-@Html.ActionLink("Create Role", "Create", "Roles")
+@*<p>
+    @Html.ActionLink("Tạo mới", "Create", "Roles")
+</p>*@
 
-<style type="text/css">
-    #tbrole, .c {
-        border: double;
-    }
-</style>
-
-<table id="tbrole">
+<table class="table">
     <tr>
-        <td class="c">
-            Role Name
-        </td>
+        <th>
+            Tên vai trò
+        </th>
     </tr>
+
     @foreach (var item in Model)
     {
         <tr>
-            <td class="c">
+            <td>
                 @item.Name
             </td>
         </tr>
     }
 </table>
+
