@@ -56,8 +56,9 @@ namespace WebApplication1.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+        [Required]
+        public List<string> listRoles { get; set; }
 
-        // Return a pre-poulated instance of AppliationUser:
         public ApplicationUser GetUser()
         {
             var user = new ApplicationUser()

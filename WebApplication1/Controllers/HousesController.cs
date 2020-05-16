@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -37,6 +38,12 @@ namespace WebApplication1.Controllers
                 .Include(i => i.House).Where(i => i.HouseId == id).ToList();
             house.Items = itemInHouseList;
             HouseViewModel viewModel = new HouseViewModel(house);
+
+            var listItem = db.Items.ToList();
+            var status = db.ItemStatuses.ToList();
+            ViewBag.ListItem = new MultiSelectList(listItem, "Id", "Name");
+            ViewBag.Status = new MultiSelectList(status, "Id", "Status");
+
             if (house == null)
             {
                 return HttpNotFound();
@@ -46,47 +53,100 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddRoom([Bind(Include = "Id,RoomName,RoomType")] HouseViewModel viewModel)
+        public ActionResult AddRoom(HouseViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                //List<Media> medias = new List<Media>();
-                //for (int i = 0; i < Request.Files.Count; i++)
-                //{
-                //    var file = Request.Files[i];
+                List<Media> medias = new List<Media>();
+                for (int i = 0; i < Request.Files.Count; i++)
+                {
+                    var file = Request.Files[i];
 
-                //    if (file != null && file.ContentLength > 0)
-                //    {
-                //        var fileName = Path.GetFileName(file.FileName);
-                //        Media fileDetail = new Media()
-                //        {
-                //            Media_Name = fileName,
-                //            Media_Extension = Path.GetExtension(fileName),
-                //            Id = Guid.NewGuid()
-                //        };
-                //        medias.Add(fileDetail);
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        Media fileDetail = new Media()
+                        {
+                            Media_Name = fileName,
+                            Media_Extension = Path.GetExtension(fileName),
+                            Id = Guid.NewGuid()
+                        };
+                        medias.Add(fileDetail);
 
-                //        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
-                //        file.SaveAs(path);
-                //    }
-                //}
+                        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                        file.SaveAs(path);
+                    }
+                }
 
                 Room room = new Room
                 {
                     Name = viewModel.RoomName,
-                    Type = viewModel.RoomType
+                    Type = viewModel.RoomType,
+                    Medias = medias
                 };
-
-                db.Rooms.Add(room);
+                db.Rooms.Add(room); 
                 db.SaveChanges();
-                //house.Medias = medias;
-                //house.Room_Count = 0;
+                
+                House house = db.Houses.Where(h => h.Id == viewModel.Id).SingleOrDefault();
+                //var roomFromDb = db.Rooms.Where(s => s.Id == room.Id).SingleOrDefault();
 
-                //db.Houses.Add(house);
-                //db.SaveChanges();
-                return RedirectToAction("Detail");
+                house.Rooms = new List<Room>();
+                house.Rooms.Add(room);
+
+                db.SaveChanges();
+
+                return RedirectToAction("Details", new { id = viewModel.Id });
             }
-            return RedirectToAction("Detail");
+            return RedirectToAction("Details", new { id = viewModel.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddItem(HouseViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                List<Media> medias = new List<Media>();
+                for (int i = 0; i < Request.Files.Count; i++)
+                {
+                    var file = Request.Files[i];
+
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        Media fileDetail = new Media()
+                        {
+                            Media_Name = fileName,
+                            Media_Extension = Path.GetExtension(fileName),
+                            Id = Guid.NewGuid()
+                        };
+                        medias.Add(fileDetail);
+
+                        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                        file.SaveAs(path);
+                    }
+                }
+
+                ItemInHouse item = new ItemInHouse
+                {
+                    HouseId = viewModel.Id,
+                    ItemId = viewModel.ItemId,
+                    StatusId = viewModel.StatusId
+                };
+                db.ItemInHouses.Add(item);
+                db.SaveChanges();
+
+                //House house = db.Houses.Where(h => h.Id == viewModel.Id).SingleOrDefault();
+                //var roomFromDb = db.Rooms.Where(s => s.Id == room.Id).SingleOrDefault();
+
+                //house.Rooms = new List<Room>();
+                //house.Rooms.Add(room);
+
+                db.SaveChanges();
+
+                return RedirectToAction("Details", new { id = viewModel.Id });
+            }
+            return RedirectToAction("Details", new { id = viewModel.Id });
         }
 
         // GET: Houses/Create
@@ -180,6 +240,15 @@ namespace WebApplication1.Controllers
                 return HttpNotFound();
             }
             return View(house);
+        }
+
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteHouse(int? id)
+        {
+            House house = db.Houses.Find(id);
+            db.Houses.Remove(house);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // POST: Houses/Delete/5

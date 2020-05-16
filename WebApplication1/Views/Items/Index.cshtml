@@ -5,30 +5,30 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Danh mục tài sản</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Tạo mới", "Create")
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ItemCategory.Name)
+            Loại tài sản
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Code)
+            Mã tài sản
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            Tên
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Description)
+            Chi tiết
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Brand)
+            Hãng sản xuất
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Price)
+            Giá tiền
         </th>
         <th></th>
     </tr>

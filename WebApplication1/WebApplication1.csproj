@@ -172,9 +172,11 @@
     <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\ItemCategoriesController.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
+    <Compile Include="Controllers\ItemStatusController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -423,6 +425,16 @@
     <Content Include="Views\Houses\AddRoom.cshtml" />
     <Content Include="Views\Users\Migrate.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\Rooms\Create.cshtml" />
+    <Content Include="Views\Rooms\Delete.cshtml" />
+    <Content Include="Views\Rooms\Details.cshtml" />
+    <Content Include="Views\Rooms\Edit.cshtml" />
+    <Content Include="Views\Rooms\Index.cshtml" />
+    <Content Include="Views\ItemStatus\Create.cshtml" />
+    <Content Include="Views\ItemStatus\Delete.cshtml" />
+    <Content Include="Views\ItemStatus\Details.cshtml" />
+    <Content Include="Views\ItemStatus\Edit.cshtml" />
+    <Content Include="Views\ItemStatus\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

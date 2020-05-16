@@ -5,11 +5,54 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Thông tin chi tiết</h2>
+<div class="row">
+    <div class="col-6">
+        <h2>Thông tin chi tiết</h2>
+    </div>
+    <div class="col-6">
+        <a class="btn btn-secondary" href="@Url.Action("Index", "Houses")">Trở về</a>
+        <a class="btn btn-primary" href="@Url.Action("Edit", "Houses", new { id = Model.Id })">Chỉnh sửa</a>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+            Xóa
+        </button>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("DeleteHouse", "Houses", FormMethod.Post))
+            {
+                @Html.HiddenFor(model => model.Id)
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Xóa dữ liệu nhà trọ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn có muốn xóa ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
 <h4>Thông tin chung</h4>
 <hr />
 <div class="row">
+
     <div class="col-6">
         @if (Model.Medias.Count > 0)
         {
@@ -50,21 +93,58 @@
 
 
 <h4>Thông tin phòng</h4>
-<a class="btn btn-primary" href="@Url.Action("AddRoom", "Houses")">Thêm mới</a>
-<hr />
 <div class="row"></div>
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#roomModal">
     Thêm mới phòng
 </button>
+<hr />
+
+<div class="room-wrap">
+    <table class="table">
+        <tr>
+            <th>
+                Ảnh
+            </th>
+            <th>
+                Phòng
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Rooms)
+        {
+            <tr>
+                <td width="20%">
+                    @if (item.Medias.Count > 0)
+                    {
+                        <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
+                    }
+                    else
+                    {
+                        <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+                    }
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <a class="btn btn-primary" href="@Url.Action("Edit", "Rooms", new { id = Model.Id })">Chỉnh sửa</a>
+                    <a class="btn btn-danger" href="@Url.Action("Delete", "Rooms", new { id = Model.Id })">Xóa</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-       
+
         <div class="modal-content">
             @using (Html.BeginForm("AddRoom", "Houses", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
+                @Html.HiddenFor(model => model.Id)
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới phòng trọ</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -94,7 +174,7 @@
                             <h4>Thông tin</h4>
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="form-group">
-                                @Html.LabelFor(model => model.RoomName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <label class="control-label col-md-2" for="RoomName">Tên phòng</label>
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.RoomName, new { htmlAttributes = new { @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.RoomName, "", new { @class = "text-danger" })
@@ -102,7 +182,7 @@
                             </div>
 
                             <div class="form-group">
-                                @Html.LabelFor(model => model.RoomType, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <label class="control-label col-md-2" for="RoomType">Kiểu phòng</label>
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.RoomType, new { htmlAttributes = new { @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.RoomType, "", new { @class = "text-danger" })
@@ -111,26 +191,134 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Create" class="btn btn-default" />
-                        </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div class="col-md-4"></div>
                 </div>
-             }
+            }
         </div>
     </div>
 </div>
 
 
 <h4>Thông tin đồ trong nhà</h4>
-<a class="btn btn-primary" href="@Url.Action("AddItem", "Houses")">Thêm mới</a>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemModal">
+    Thêm mới tài sản
+</button>
 <hr />
-<div class="row"></div>
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<div class="room-wrap">
+    <table class="table">
+        <tr>
+            <th>
+                Tài sản
+            </th>
+            <th>
+                Trạng thái
+            </th>
+            <th>
+                Ngày thêm
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Items)
+        {
+    <tr>
+        <td width="20%">
+            @if (item.Medias.Count > 0)
+            {
+                <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
+            }
+            else
+            {
+                <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+            }
+        </td>
+        <td>
+            @item.Item.Name
+        </td>
+        <td>
+            @item.Status.Status
+        </td>
+        <td>
+            @item.AddedDate
+        </td>
+        <td>
+            <a class="btn btn-primary" href="@Url.Action("Edit", "Items", new { id = Model.Id })">Sửa thông tin</a>
+            <a class="btn btn-primary" href="@Url.Action("Edit", "ItemStatus", new { id = Model.Id })">Sửa trạng thái</a>
+            <a class="btn btn-danger" href="@Url.Action("Delete", "Rooms", new { id = Model.Id })">Xóa</a>
+        </td>
+    </tr>
+        }
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("AddItem", "Houses", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.HiddenFor(model => model.Id)
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới phòng trọ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-4">
+                            <h4>Ảnh</h4>
+                            <div class="row">
+                                <div class="col-8">
+                                    <input class="media-img form-control" type="file" name="files" multiple />
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" class="clear-media btn btn-warning right">Xóa hết</button>
+                                </div>
+                            </div>
+
+                            <div class="preview">
+
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <h4>Thông tin</h4>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="ItemId">Tài sản</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("ItemId", (MultiSelectList)ViewBag.ListItem)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="RoomType">Trạng thái</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("StatusId", (MultiSelectList)ViewBag.Status)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

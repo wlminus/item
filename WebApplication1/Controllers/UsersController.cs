@@ -27,55 +27,40 @@ namespace WebApplication1.Controllers
             RoleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
         }
 
-        public async Task<ActionResult> Migrate()
-        {
-            var store = new RoleStore<IdentityRole>(context);
-            var manager = new RoleManager<IdentityRole>(store);
+        //public async Task<ActionResult> Migrate()
+        //{
+        //    var store = new RoleStore<IdentityRole>(context);
+        //    var manager = new RoleManager<IdentityRole>(store);
 
-            // RoleTypes is a class containing constant string values for different roles
-            List<IdentityRole> identityRoles = new List<IdentityRole>();
-            identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_ADMIN });
-            identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_MANAGER });
-            identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_USER });
+        //    // RoleTypes is a class containing constant string values for different roles
+        //    List<IdentityRole> identityRoles = new List<IdentityRole>();
+        //    identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_ADMIN });
+        //    identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_MANAGER });
+        //    identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_USER });
 
-            foreach (IdentityRole role in identityRoles)
-            {
-                manager.Create(role);
-            }
-            var UserManager2 = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+        //    foreach (IdentityRole role in identityRoles)
+        //    {
+        //        manager.Create(role);
+        //    }
+        //    var UserManager2 = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
-            ApplicationUser admin = new ApplicationUser
-            {
-                Email = "admin@admin.com",
-                UserName = "admin@admin.com",
-                FirstName = "admin",
-                LastName = "admin"
-            };
+        //    ApplicationUser admin = new ApplicationUser
+        //    {
+        //        Email = "admin@admin.com",
+        //        UserName = "admin@admin.com",
+        //        FirstName = "admin",
+        //        LastName = "admin"
+        //    };
 
-            var result = await UserManager2.CreateAsync(admin, "AAssdd12@123");
+        //    var result = await UserManager2.CreateAsync(admin, "AAssdd12@123");
 
-            if (result.Succeeded)
-                result = UserManager2.AddToRole(admin.Id, RolesType.ROLE_ADMIN);
+        //    if (result.Succeeded)
+        //        result = UserManager2.AddToRole(admin.Id, RolesType.ROLE_ADMIN);
 
-            return View();
-        }
+        //    return View();
+        //}
         public ActionResult Index()
         {
-            //var users = UserManager.Users;
-            //List<ListUserViewModel> listModel = new List<ListUserViewModel>();
-            //foreach (var user in users)
-            //{
-            //    var listRole = UserManager.GetRoles(user.Id);
-            //    var model = new ListUserViewModel()
-            //    {
-            //        user = user,
-            //        roles = listRole
-            //    };
-            //    listModel.Add(model);
-            //}
-            
-            //return View(listModel);
-
             var roles = RoleManager.Roles.ToList();
             var userList = context.Users.ToList();
             List<ListUserViewModel> listModel = new List<ListUserViewModel>();
@@ -101,6 +86,8 @@ namespace WebApplication1.Controllers
 
         public ActionResult Create()
         {
+            var roles = context.Roles.ToList();
+            ViewBag.ListRoles = new MultiSelectList(roles, "Name", "Name");
             var NewUser = new RegisterModel();
             return View(NewUser);
         }
@@ -134,8 +121,13 @@ namespace WebApplication1.Controllers
 
                 var result = UserManager.Create(newUser, createUser.Password);
                 if (result.Succeeded)
-                    result = UserManager.AddToRole(newUser.Id, RolesType.ROLE_USER);
-                
+                {
+                    foreach (var role in createUser.listRoles)
+                    {
+                        UserManager.AddToRole(newUser.Id, role);
+                    }
+                } 
+
                 return RedirectToAction("Index");
             }
             return View(createUser);

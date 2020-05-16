@@ -5,8 +5,9 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
-    public class HouseViewModel : BaseEntity
+    public class HouseViewModel
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
         public string District { get; set; }
@@ -25,8 +26,13 @@ namespace WebApplication1.Models
         public string RoomName { get; set; }
         public string RoomType { get; set; }
 
+        public int ItemId { get; set; }
+        public int StatusId { get; set; }
+        public long AddedDate { get; set; }
+
         public HouseViewModel(House house)
         {
+            this.Id = house.Id;
             this.Name = house.Name;
             this.Location = house.Location;
             this.District = house.District;

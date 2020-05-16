@@ -63,6 +63,13 @@
                     @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="Role">Vai trò</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("listRoles", (MultiSelectList)ViewBag.ListRoles, new { multiple = "multiple" })
+                </div>
+            </div>
         </div>
     </div>
     
