@@ -171,7 +171,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\ItemCategoriesController.cs" />
-    <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="Controllers\ItemStatusController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
@@ -181,9 +180,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005150916130_init.cs" />
-    <Compile Include="Migrations\202005150916130_init.Designer.cs">
-      <DependentUpon>202005150916130_init.cs</DependentUpon>
+    <Compile Include="Migrations\202005191711536_init.cs" />
+    <Compile Include="Migrations\202005191711536_init.Designer.cs">
+      <DependentUpon>202005191711536_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -192,7 +191,6 @@
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\HouseViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemCategory.cs" />
     <Compile Include="Models\ItemInHouse.cs" />
     <Compile Include="Models\ItemInRoom.cs" />
@@ -201,7 +199,6 @@
     <Compile Include="Models\Media.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\Transaction.cs" />
-    <Compile Include="Models\TransactionCategory.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -409,11 +406,6 @@
     <Content Include="Views\ItemCategories\Details.cshtml" />
     <Content Include="Views\ItemCategories\Edit.cshtml" />
     <Content Include="Views\ItemCategories\Index.cshtml" />
-    <Content Include="Views\Items\Create.cshtml" />
-    <Content Include="Views\Items\Delete.cshtml" />
-    <Content Include="Views\Items\Details.cshtml" />
-    <Content Include="Views\Items\Edit.cshtml" />
-    <Content Include="Views\Items\Index.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\Create.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
@@ -453,8 +445,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202005150916130_init.resx">
-      <DependentUpon>202005150916130_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005191711536_init.resx">
+      <DependentUpon>202005191711536_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

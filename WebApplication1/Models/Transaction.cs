@@ -40,7 +40,7 @@ namespace WebApplication1.Models
         [Column("IsVerified")]
         public Boolean IsVerified { get; set; }
 
-        public int TransactionCategoryId { get; set; }
-        public virtual TransactionCategory TransactionCategory { get; set; }
+        [Column("Type")]
+        public string Type { get; set; }
     }
 }

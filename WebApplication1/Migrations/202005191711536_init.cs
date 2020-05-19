@@ -11,7 +11,7 @@ namespace WebApplication1.Migrations
                 "dbo.House",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        Id = c.Long(nullable: false, identity: true),
                         Name = c.String(maxLength: 500),
                         Location = c.String(maxLength: 500),
                         District = c.String(maxLength: 500),
@@ -27,41 +27,27 @@ namespace WebApplication1.Migrations
                 "dbo.ItemInHouse",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
-                        ItemId = c.Int(nullable: false),
-                        HouseId = c.Int(nullable: false),
-                        StatusId = c.Int(nullable: false),
+                        Id = c.Long(nullable: false, identity: true),
+                        Name = c.String(maxLength: 255),
+                        Description = c.String(maxLength: 1000),
+                        HouseId = c.Long(nullable: false),
+                        StatusId = c.Long(nullable: false),
+                        CategoryId = c.Long(nullable: false),
                         AddedDate = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.House", t => t.HouseId, cascadeDelete: true)
-                .ForeignKey("dbo.Item", t => t.ItemId, cascadeDelete: true)
+                .ForeignKey("dbo.ItemCategory", t => t.CategoryId, cascadeDelete: true)
                 .ForeignKey("dbo.ItemStatus", t => t.StatusId, cascadeDelete: true)
-                .Index(t => t.ItemId)
                 .Index(t => t.HouseId)
-                .Index(t => t.StatusId);
-            
-            CreateTable(
-                "dbo.Item",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Code = c.String(maxLength: 20),
-                        Name = c.String(maxLength: 255),
-                        Description = c.String(maxLength: 1000),
-                        Brand = c.String(maxLength: 255),
-                        Price = c.Double(nullable: false),
-                        ItemCategoryId = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.ItemCategory", t => t.ItemCategoryId, cascadeDelete: true)
-                .Index(t => t.ItemCategoryId);
+                .Index(t => t.StatusId)
+                .Index(t => t.CategoryId);
             
             CreateTable(
                 "dbo.ItemCategory",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        Id = c.Long(nullable: false, identity: true),
                         Name = c.String(maxLength: 500),
                         Description = c.String(maxLength: 1000),
                     })
@@ -81,36 +67,44 @@ namespace WebApplication1.Migrations
                 "dbo.ItemInRoom",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
-                        ItemId = c.Int(nullable: false),
+                        Id = c.Long(nullable: false, identity: true),
+                        Name = c.String(maxLength: 255),
+                        Description = c.String(maxLength: 1000),
                         RoomId = c.Int(nullable: false),
                         StatusId = c.Int(nullable: false),
+                        CategoryId = c.Int(nullable: false),
                         AddedDate = c.Long(nullable: false),
+                        ItemCategory_Id = c.Long(),
+                        Room_Id = c.Long(),
+                        Status_Id = c.Long(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Item", t => t.ItemId, cascadeDelete: true)
-                .ForeignKey("dbo.Room", t => t.RoomId, cascadeDelete: true)
-                .ForeignKey("dbo.ItemStatus", t => t.StatusId, cascadeDelete: true)
-                .Index(t => t.ItemId)
-                .Index(t => t.RoomId)
-                .Index(t => t.StatusId);
+                .ForeignKey("dbo.ItemCategory", t => t.ItemCategory_Id)
+                .ForeignKey("dbo.Room", t => t.Room_Id)
+                .ForeignKey("dbo.ItemStatus", t => t.Status_Id)
+                .Index(t => t.ItemCategory_Id)
+                .Index(t => t.Room_Id)
+                .Index(t => t.Status_Id);
             
             CreateTable(
                 "dbo.Room",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        Id = c.Long(nullable: false, identity: true),
                         Name = c.String(maxLength: 500),
                         Type = c.String(maxLength: 500),
                         Rent_User_Id = c.Int(nullable: false),
+                        House_Id = c.Long(),
                     })
-                .PrimaryKey(t => t.Id);
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.House", t => t.House_Id)
+                .Index(t => t.House_Id);
             
             CreateTable(
                 "dbo.ItemStatus",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        Id = c.Long(nullable: false, identity: true),
                         Status = c.String(maxLength: 255),
                         Decription = c.String(maxLength: 1000),
                         Code = c.String(maxLength: 20),
@@ -141,20 +135,10 @@ namespace WebApplication1.Migrations
                 .Index(t => t.RoleId);
             
             CreateTable(
-                "dbo.TransactionCategory",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Name = c.String(maxLength: 500),
-                        Decription = c.String(maxLength: 1000),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
                 "dbo.Transaction",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        Id = c.Long(nullable: false, identity: true),
                         Date = c.Long(nullable: false),
                         FromHouse = c.String(maxLength: 500),
                         FromRoom = c.String(maxLength: 500),
@@ -163,11 +147,9 @@ namespace WebApplication1.Migrations
                         FromStatus = c.String(maxLength: 500),
                         ToStatus = c.String(maxLength: 500),
                         IsVerified = c.Boolean(nullable: false),
-                        TransactionCategoryId = c.Int(nullable: false),
+                        Type = c.String(),
                     })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.TransactionCategory", t => t.TransactionCategoryId, cascadeDelete: true)
-                .Index(t => t.TransactionCategoryId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -225,7 +207,7 @@ namespace WebApplication1.Migrations
                 c => new
                     {
                         Media_Id = c.Guid(nullable: false),
-                        House_Id = c.Int(nullable: false),
+                        House_Id = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => new { t.Media_Id, t.House_Id })
                 .ForeignKey("dbo.Media", t => t.Media_Id, cascadeDelete: true)
@@ -238,7 +220,7 @@ namespace WebApplication1.Migrations
                 c => new
                     {
                         Media_Id = c.Guid(nullable: false),
-                        ItemInHouse_Id = c.Int(nullable: false),
+                        ItemInHouse_Id = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => new { t.Media_Id, t.ItemInHouse_Id })
                 .ForeignKey("dbo.Media", t => t.Media_Id, cascadeDelete: true)
@@ -250,7 +232,7 @@ namespace WebApplication1.Migrations
                 "dbo.ItemInRoomMedias",
                 c => new
                     {
-                        ItemInRoom_Id = c.Int(nullable: false),
+                        ItemInRoom_Id = c.Long(nullable: false),
                         Media_Id = c.Guid(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ItemInRoom_Id, t.Media_Id })
@@ -260,23 +242,10 @@ namespace WebApplication1.Migrations
                 .Index(t => t.Media_Id);
             
             CreateTable(
-                "dbo.RoomHouses",
-                c => new
-                    {
-                        Room_Id = c.Int(nullable: false),
-                        House_Id = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.Room_Id, t.House_Id })
-                .ForeignKey("dbo.Room", t => t.Room_Id, cascadeDelete: true)
-                .ForeignKey("dbo.House", t => t.House_Id, cascadeDelete: true)
-                .Index(t => t.Room_Id)
-                .Index(t => t.House_Id);
-            
-            CreateTable(
                 "dbo.RoomMedias",
                 c => new
                     {
-                        Room_Id = c.Int(nullable: false),
+                        Room_Id = c.Long(nullable: false),
                         Media_Id = c.Guid(nullable: false),
                     })
                 .PrimaryKey(t => new { t.Room_Id, t.Media_Id })
@@ -293,29 +262,24 @@ namespace WebApplication1.Migrations
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "Avatar_Id", "dbo.Media");
-            DropForeignKey("dbo.Transaction", "TransactionCategoryId", "dbo.TransactionCategory");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
+            DropForeignKey("dbo.Room", "House_Id", "dbo.House");
             DropForeignKey("dbo.ItemInHouse", "StatusId", "dbo.ItemStatus");
-            DropForeignKey("dbo.ItemInRoom", "StatusId", "dbo.ItemStatus");
+            DropForeignKey("dbo.ItemInRoom", "Status_Id", "dbo.ItemStatus");
             DropForeignKey("dbo.RoomMedias", "Media_Id", "dbo.Media");
             DropForeignKey("dbo.RoomMedias", "Room_Id", "dbo.Room");
-            DropForeignKey("dbo.ItemInRoom", "RoomId", "dbo.Room");
-            DropForeignKey("dbo.RoomHouses", "House_Id", "dbo.House");
-            DropForeignKey("dbo.RoomHouses", "Room_Id", "dbo.Room");
+            DropForeignKey("dbo.ItemInRoom", "Room_Id", "dbo.Room");
             DropForeignKey("dbo.ItemInRoomMedias", "Media_Id", "dbo.Media");
             DropForeignKey("dbo.ItemInRoomMedias", "ItemInRoom_Id", "dbo.ItemInRoom");
-            DropForeignKey("dbo.ItemInRoom", "ItemId", "dbo.Item");
+            DropForeignKey("dbo.ItemInRoom", "ItemCategory_Id", "dbo.ItemCategory");
             DropForeignKey("dbo.MediaItemInHouses", "ItemInHouse_Id", "dbo.ItemInHouse");
             DropForeignKey("dbo.MediaItemInHouses", "Media_Id", "dbo.Media");
             DropForeignKey("dbo.MediaHouses", "House_Id", "dbo.House");
             DropForeignKey("dbo.MediaHouses", "Media_Id", "dbo.Media");
-            DropForeignKey("dbo.ItemInHouse", "ItemId", "dbo.Item");
-            DropForeignKey("dbo.Item", "ItemCategoryId", "dbo.ItemCategory");
+            DropForeignKey("dbo.ItemInHouse", "CategoryId", "dbo.ItemCategory");
             DropForeignKey("dbo.ItemInHouse", "HouseId", "dbo.House");
             DropIndex("dbo.RoomMedias", new[] { "Media_Id" });
             DropIndex("dbo.RoomMedias", new[] { "Room_Id" });
-            DropIndex("dbo.RoomHouses", new[] { "House_Id" });
-            DropIndex("dbo.RoomHouses", new[] { "Room_Id" });
             DropIndex("dbo.ItemInRoomMedias", new[] { "Media_Id" });
             DropIndex("dbo.ItemInRoomMedias", new[] { "ItemInRoom_Id" });
             DropIndex("dbo.MediaItemInHouses", new[] { "ItemInHouse_Id" });
@@ -326,19 +290,17 @@ namespace WebApplication1.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", new[] { "Avatar_Id" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.Transaction", new[] { "TransactionCategoryId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropIndex("dbo.ItemInRoom", new[] { "StatusId" });
-            DropIndex("dbo.ItemInRoom", new[] { "RoomId" });
-            DropIndex("dbo.ItemInRoom", new[] { "ItemId" });
-            DropIndex("dbo.Item", new[] { "ItemCategoryId" });
+            DropIndex("dbo.Room", new[] { "House_Id" });
+            DropIndex("dbo.ItemInRoom", new[] { "Status_Id" });
+            DropIndex("dbo.ItemInRoom", new[] { "Room_Id" });
+            DropIndex("dbo.ItemInRoom", new[] { "ItemCategory_Id" });
+            DropIndex("dbo.ItemInHouse", new[] { "CategoryId" });
             DropIndex("dbo.ItemInHouse", new[] { "StatusId" });
             DropIndex("dbo.ItemInHouse", new[] { "HouseId" });
-            DropIndex("dbo.ItemInHouse", new[] { "ItemId" });
             DropTable("dbo.RoomMedias");
-            DropTable("dbo.RoomHouses");
             DropTable("dbo.ItemInRoomMedias");
             DropTable("dbo.MediaItemInHouses");
             DropTable("dbo.MediaHouses");
@@ -346,7 +308,6 @@ namespace WebApplication1.Migrations
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.Transaction");
-            DropTable("dbo.TransactionCategory");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.ItemStatus");
@@ -354,7 +315,6 @@ namespace WebApplication1.Migrations
             DropTable("dbo.ItemInRoom");
             DropTable("dbo.Media");
             DropTable("dbo.ItemCategory");
-            DropTable("dbo.Item");
             DropTable("dbo.ItemInHouse");
             DropTable("dbo.House");
         }

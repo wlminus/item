@@ -10,7 +10,7 @@ namespace WebApplication1.Models
     public class BaseEntity
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         //[StringLength(50)]
         //public string CreateBy { get; set; }

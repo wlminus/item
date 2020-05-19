@@ -23,8 +23,6 @@ namespace WebApplication1.Models
 
         public virtual ICollection<ItemInRoom> Items { get; set; }
 
-        public virtual ICollection<House> Houses { get; set; }
-
         public virtual ICollection<Media> Medias { get; set; }
 
     }

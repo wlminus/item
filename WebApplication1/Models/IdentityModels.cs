@@ -35,7 +35,6 @@ namespace WebApplication1.Models
         }
 
         public virtual DbSet<House> Houses { get; set; }
-        public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<ItemCategory> ItemCategories { get; set; }
         public virtual DbSet<ItemStatus> ItemStatuses { get; set; }
         public virtual DbSet<ItemInHouse> ItemInHouses { get; set; }
@@ -43,7 +42,6 @@ namespace WebApplication1.Models
         public virtual DbSet<Media> Medias { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
-        public virtual DbSet<TransactionCategory> TransactionCategories { get; set; }
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

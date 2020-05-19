@@ -34,14 +34,11 @@ namespace WebApplication1.Controllers
                 .Include(h => h.Rooms).Where(h => h.Id == id).SingleOrDefault();
             var itemInHouseList = db.ItemInHouses
                 .Include(i => i.Medias)
-                .Include(i => i.Item)
                 .Include(i => i.House).Where(i => i.HouseId == id).ToList();
             house.Items = itemInHouseList;
             HouseViewModel viewModel = new HouseViewModel(house);
 
-            var listItem = db.Items.ToList();
             var status = db.ItemStatuses.ToList();
-            ViewBag.ListItem = new MultiSelectList(listItem, "Id", "Name");
             ViewBag.Status = new MultiSelectList(status, "Id", "Status");
 
             if (house == null)
@@ -130,7 +127,6 @@ namespace WebApplication1.Controllers
                 ItemInHouse item = new ItemInHouse
                 {
                     HouseId = viewModel.Id,
-                    ItemId = viewModel.ItemId,
                     StatusId = viewModel.StatusId
                 };
                 db.ItemInHouses.Add(item);
