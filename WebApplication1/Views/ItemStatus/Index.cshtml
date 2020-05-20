@@ -5,42 +5,164 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h3>Danh mục trạng thái đồ dùng</h3>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<div class="row">
+    <div class="col-8">
+        @using (Html.BeginForm("Index", "ItemStatus", FormMethod.Post))
+        {
+
+            <div>
+                <input type="text" id="query" name="query" />
+
+                <input type="submit" id="search-btn" value="Tìm kiếm" class="btn btn-primary" />
+                <a class="btn btn-success" href="@Url.Action("Index", "ItemStatus")">Tải lại</a>
+            </div>
+
+        }
+
+        @{
+            if (ViewBag.SearchKey != null)
+            {
+                <span>
+                    Search Key: @ViewBag.SearchKey
+                </span>
+            }
+        }
+    </div>
+    <div class="col-4 text-right">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemStatusModal">
+            Tạo mới
+        </button>
+    </div>
+</div>
+
+<br />
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Status)
+            Mã trạng thái
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Decription)
+            Trạng thái
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Code)
+            Chi tiết
         </th>
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Decription)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Code)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Decription)
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#itemStatusModal" 
+                        data-id="@item.Id" data-code="@item.Code" data-status="@item.Status" data-desc="@item.Decription">
+                    Chỉnh sửa
+                </button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
+            </td>
+        </tr>
+    }
 
 </table>
+
+
+<!-- Modal Delete -->
+<div class="modal fade" id="deleteFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("Delete", "ItemStatus", FormMethod.Post))
+            {
+                <input data-val="true" id="delete-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Xóa dữ liệu trạng thái?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn có muốn xóa ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create ItemStatus -->
+<div class="modal fade" id="itemStatusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("Add", "ItemStatus", FormMethod.Post))
+            {
+                <input data-val="true" id="status-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới phòng trọ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Code">Mã trạng thái</label>
+                        <div class="col-md-10">
+                            <input type="text" id="Code" name="Code" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Status">Trạng thái</label>
+                        <div class="col-md-10">
+                            <input type="text" id="Status" name="Status" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Decription">Chi tiết</label>
+                        <div class="col-md-10">
+                            <input type="text" id="Decription" name="Decription" class="form-control" />
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

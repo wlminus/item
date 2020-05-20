@@ -22,6 +22,14 @@ namespace WebApplication1.Controllers
             return View(db.Houses.ToList());
         }
 
+        [HttpPost]
+        public ActionResult Index(string query)
+        {
+            ViewBag.SearchKey = query;
+            var data = db.Houses.Where(it => (it.Name.Contains(query) || it.Location.Contains(query) || it.District.Contains(query) || it.Province.Contains(query) || it.Description.Contains(query))).ToList();
+            return View(data);
+        }
+
         // GET: Houses/Details/5
         public ActionResult Details(int? id)
         {
@@ -31,15 +39,19 @@ namespace WebApplication1.Controllers
             }
             House house = db.Houses
                 .Include(h => h.Medias)
-                .Include(h => h.Rooms).Where(h => h.Id == id).SingleOrDefault();
-            var itemInHouseList = db.ItemInHouses
-                .Include(i => i.Medias)
-                .Include(i => i.House).Where(i => i.HouseId == id).ToList();
-            house.Items = itemInHouseList;
+                .Include(h => h.Rooms)
+                .Include(h => h.Items).Where(h => h.Id == id).SingleOrDefault();
+            //var itemInHouseList = db.ItemInHouses
+            //    .Include(i => i.Medias)
+            //    .Include(i => i.House).Where(i => i.HouseId == id).ToList();
+
+            //house.Items = itemInHouseList;
             HouseViewModel viewModel = new HouseViewModel(house);
 
             var status = db.ItemStatuses.ToList();
             ViewBag.Status = new MultiSelectList(status, "Id", "Status");
+            var cat = db.ItemCategories.ToList();
+            ViewBag.ItemCategories = new MultiSelectList(cat, "Id", "Name");
 
             if (house == null)
             {
@@ -50,100 +62,140 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddRoom(HouseViewModel viewModel)
+        public ActionResult AddRoom(FormCollection formCollection)
         {
-            if (ModelState.IsValid)
+            long houseId = long.Parse(formCollection["House-Id"]);
+
+            List<Media> medias = new List<Media>();
+            for (int i = 0; i < Request.Files.Count; i++)
             {
-                List<Media> medias = new List<Media>();
-                for (int i = 0; i < Request.Files.Count; i++)
-                {
-                    var file = Request.Files[i];
+                var file = Request.Files[i];
 
-                    if (file != null && file.ContentLength > 0)
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    Media fileDetail = new Media()
                     {
-                        var fileName = Path.GetFileName(file.FileName);
-                        Media fileDetail = new Media()
-                        {
-                            Media_Name = fileName,
-                            Media_Extension = Path.GetExtension(fileName),
-                            Id = Guid.NewGuid()
-                        };
-                        medias.Add(fileDetail);
+                        Media_Name = fileName,
+                        Media_Extension = Path.GetExtension(fileName),
+                        Id = Guid.NewGuid()
+                    };
+                    medias.Add(fileDetail);
 
-                        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
-                        file.SaveAs(path);
-                    }
+                    var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                    file.SaveAs(path);
                 }
-
-                Room room = new Room
-                {
-                    Name = viewModel.RoomName,
-                    Type = viewModel.RoomType,
-                    Medias = medias
-                };
-                db.Rooms.Add(room); 
-                db.SaveChanges();
-                
-                House house = db.Houses.Where(h => h.Id == viewModel.Id).SingleOrDefault();
-                //var roomFromDb = db.Rooms.Where(s => s.Id == room.Id).SingleOrDefault();
-
-                house.Rooms = new List<Room>();
-                house.Rooms.Add(room);
-
-                db.SaveChanges();
-
-                return RedirectToAction("Details", new { id = viewModel.Id });
             }
-            return RedirectToAction("Details", new { id = viewModel.Id });
+
+            Room room = new Room
+            {
+                Name = formCollection["RoomName"],
+                Type = formCollection["RoomType"],
+                Medias = medias
+            };
+            db.Rooms.Add(room);
+
+            House house = db.Houses.Where(h => h.Id == houseId).SingleOrDefault();
+
+            house.Rooms.Add(room);
+            house.Room_Count++;
+
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = houseId });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddItem(HouseViewModel viewModel)
+        public ActionResult AddItem(FormCollection formCollection)
         {
-            if (ModelState.IsValid)
+            List<Media> medias = new List<Media>();
+            for (int i = 0; i < Request.Files.Count; i++)
             {
-                List<Media> medias = new List<Media>();
-                for (int i = 0; i < Request.Files.Count; i++)
-                {
-                    var file = Request.Files[i];
+                var file = Request.Files[i];
 
-                    if (file != null && file.ContentLength > 0)
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    Media fileDetail = new Media()
                     {
-                        var fileName = Path.GetFileName(file.FileName);
-                        Media fileDetail = new Media()
-                        {
-                            Media_Name = fileName,
-                            Media_Extension = Path.GetExtension(fileName),
-                            Id = Guid.NewGuid()
-                        };
-                        medias.Add(fileDetail);
+                        Media_Name = fileName,
+                        Media_Extension = Path.GetExtension(fileName),
+                        Id = Guid.NewGuid()
+                    };
+                    medias.Add(fileDetail);
 
-                        var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
-                        file.SaveAs(path);
-                    }
+                    var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                    file.SaveAs(path);
                 }
-
-                ItemInHouse item = new ItemInHouse
-                {
-                    HouseId = viewModel.Id,
-                    StatusId = viewModel.StatusId
-                };
-                db.ItemInHouses.Add(item);
-                db.SaveChanges();
-
-                //House house = db.Houses.Where(h => h.Id == viewModel.Id).SingleOrDefault();
-                //var roomFromDb = db.Rooms.Where(s => s.Id == room.Id).SingleOrDefault();
-
-                //house.Rooms = new List<Room>();
-                //house.Rooms.Add(room);
-
-                db.SaveChanges();
-
-                return RedirectToAction("Details", new { id = viewModel.Id });
             }
-            return RedirectToAction("Details", new { id = viewModel.Id });
+
+            long houseId = long.Parse(formCollection["House-Id"]);
+
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            long secondsSinceEpoch = (long)t.TotalSeconds;
+
+            ItemInHouse item = new ItemInHouse
+            {
+                Name = formCollection["ItemName"],
+                Description = formCollection["ItemDescription"],
+                HouseId = houseId,
+                ItemCategoryId = long.Parse(formCollection["ItemCategoryId"]),
+                StatusId = long.Parse(formCollection["ItemStatusId"]),
+                Medias = medias,
+                AddedDate = secondsSinceEpoch
+            };
+
+            db.ItemInHouses.Add(item);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = houseId });
         }
+
+
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteHouse(int? id)
+        {
+            House house = db.Houses.Find(id);
+            db.Houses.Remove(house);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteRoom(int? id)
+        {
+
+            Room roomToDel = db.Rooms
+                .Include(h => h.House).Where(h => h.Id == id).SingleOrDefault();
+
+            long houseId = roomToDel.House.Id;
+            House house = db.Houses.Where(h => h.Id == houseId).SingleOrDefault();
+            house.Room_Count--;
+
+            db.Rooms.Remove(roomToDel);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = houseId });
+        }
+
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteItem(int? id)
+        {
+
+            ItemInHouse itemToDel = db.ItemInHouses
+                .Include(h => h.House).Where(h => h.Id == id).SingleOrDefault();
+
+            long houseId = itemToDel.House.Id;
+
+            db.ItemInHouses.Remove(itemToDel);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = houseId });
+        }
+
+
+
 
         // GET: Houses/Create
         public ActionResult Create()
@@ -224,28 +276,21 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Houses/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            House house = db.Houses.Find(id);
-            if (house == null)
-            {
-                return HttpNotFound();
-            }
-            return View(house);
-        }
+        //public ActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    House house = db.Houses.Find(id);
+        //    if (house == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(house);
+        //}
 
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteHouse(int? id)
-        {
-            House house = db.Houses.Find(id);
-            db.Houses.Remove(house);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        
 
         // POST: Houses/Delete/5
         [HttpPost, ActionName("Delete")]

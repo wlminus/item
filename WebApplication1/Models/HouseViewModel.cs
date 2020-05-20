@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -26,9 +27,11 @@ namespace WebApplication1.Models
         public string RoomName { get; set; }
         public string RoomType { get; set; }
 
-        public int ItemId { get; set; }
-        public int StatusId { get; set; }
-        public long AddedDate { get; set; }
+        [Required]
+        public string ItemName { get; set; }
+        public string ItemDescription { get; set; }
+        public long ItemStatusId { get; set; }
+        public long ItemCategoryId { get; set; }
 
         public HouseViewModel(House house)
         {

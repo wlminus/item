@@ -21,6 +21,9 @@ namespace WebApplication1.Models
         [Column("Rent_User_Id")]
         public int Rent_User_Id { get; set; }
 
+        public long HouseId { get; set; }
+        public House House { get; set; }
+
         public virtual ICollection<ItemInRoom> Items { get; set; }
 
         public virtual ICollection<Media> Medias { get; set; }

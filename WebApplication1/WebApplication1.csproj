@@ -171,6 +171,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\ItemCategoriesController.cs" />
+    <Compile Include="Controllers\ItemInHousesController.cs" />
     <Compile Include="Controllers\ItemStatusController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
@@ -180,9 +181,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005191711536_init.cs" />
-    <Compile Include="Migrations\202005191711536_init.Designer.cs">
-      <DependentUpon>202005191711536_init.cs</DependentUpon>
+    <Compile Include="Migrations\202005201716213_iit.cs" />
+    <Compile Include="Migrations\202005201716213_iit.Designer.cs">
+      <DependentUpon>202005201716213_iit.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -427,6 +428,11 @@
     <Content Include="Views\ItemStatus\Details.cshtml" />
     <Content Include="Views\ItemStatus\Edit.cshtml" />
     <Content Include="Views\ItemStatus\Index.cshtml" />
+    <Content Include="Views\ItemInHouses\Create.cshtml" />
+    <Content Include="Views\ItemInHouses\Delete.cshtml" />
+    <Content Include="Views\ItemInHouses\Details.cshtml" />
+    <Content Include="Views\ItemInHouses\Edit.cshtml" />
+    <Content Include="Views\ItemInHouses\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -445,8 +451,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202005191711536_init.resx">
-      <DependentUpon>202005191711536_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005201716213_iit.resx">
+      <DependentUpon>202005201716213_iit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

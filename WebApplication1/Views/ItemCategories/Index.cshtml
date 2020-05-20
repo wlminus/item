@@ -7,9 +7,36 @@
 
 <h2>Danh mục loại đồ dùng</h2>
 
-<p>
-    @Html.ActionLink("Tạo mới", "Create")
-</p>
+<div class="row">
+    <div class="col-8">
+        @using (Html.BeginForm("Index", "ItemCategories", FormMethod.Post))
+        {
+
+            <div>
+                <input type="text" id="query" name="query" />
+
+                <input type="submit" id="search-btn" value="Tìm kiếm" class="btn btn-primary" />
+                <a class="btn btn-success" href="@Url.Action("Index", "ItemCategories")">Tải lại</a>
+            </div>
+
+        }
+
+        @{
+            if (ViewBag.SearchKey != null)
+            {
+                <span>
+                    Search Key: @ViewBag.SearchKey
+                </span>
+            }
+        }
+    </div>
+    <div class="col-4 text-right">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemCategoriesModal">
+            Tạo mới
+        </button>
+    </div>
+</div>
+
 <table class="table">
     <tr>
         <th>
@@ -21,19 +48,105 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.ActionLink("Sửa", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Xóa", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#itemCategoriesModal"
+                        data-id="@item.Id" data-name="@item.Name" data-desc="@item.Description">
+                    Chỉnh sửa
+                </button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
+            </td>
+        </tr>
+    }
 
 </table>
+
+
+
+<!-- Modal Delete -->
+<div class="modal fade" id="deleteFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("Delete", "ItemCategories", FormMethod.Post))
+            {
+                <input data-val="true" id="delete-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Xóa dữ liệu trạng thái?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn có muốn xóa ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create ItemStatus -->
+<div class="modal fade" id="itemCategoriesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("Add", "ItemCategories", FormMethod.Post))
+            {
+                <input data-val="true" id="category-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới danh mục</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Name">Tên danh mục</label>
+                        <div class="col-md-10">
+                            <input type="text" id="Name" name="Name" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Description">Chi tiết</label>
+                        <div class="col-md-10">
+                            <input type="text" id="Description" name="Description" class="form-control" />
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

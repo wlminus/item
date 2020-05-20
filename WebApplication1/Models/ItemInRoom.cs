@@ -19,15 +19,15 @@ namespace WebApplication1.Models
         public string Description { get; set; }
 
         [Column("RoomId")]
-        public int RoomId { get; set; }
+        public long RoomId { get; set; }
         public virtual Room Room { get; set; }
 
         [Column("StatusId")]
-        public int StatusId { get; set; }
+        public long StatusId { get; set; }
         public virtual ItemStatus Status { get; set; }
 
         [Column("CategoryId")]
-        public int ItemCategoryId { get; set; }
+        public long ItemCategoryId { get; set; }
         public virtual ItemCategory ItemCategory { get; set; }
 
         [Column("AddedDate")]

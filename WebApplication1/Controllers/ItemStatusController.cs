@@ -20,91 +20,45 @@ namespace WebApplication1.Controllers
             return View(db.ItemStatuses.ToList());
         }
 
-        // GET: ItemStatus/Details/5
-        public ActionResult Details(int? id)
+        [HttpPost]
+        public ActionResult Index(string query)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ItemStatus itemStatus = db.ItemStatuses.Find(id);
-            if (itemStatus == null)
-            {
-                return HttpNotFound();
-            }
-            return View(itemStatus);
+            ViewBag.SearchKey = query;
+            var data = db.ItemStatuses.Where(it => (it.Code.Contains(query) || it.Status.Contains(query))).ToList();
+            return View(data);
         }
 
-        // GET: ItemStatus/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ItemStatus/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Status,Decription,Code")] ItemStatus itemStatus)
+        public ActionResult Add(FormCollection formCollection)
         {
-            if (ModelState.IsValid)
+            if (String.IsNullOrEmpty(formCollection["Id"]))
             {
+                ItemStatus itemStatus = new ItemStatus()
+                {
+                    Code = formCollection["Code"],
+                    Status = formCollection["Status"],
+                    Decription = formCollection["Decription"]
+                };
+
                 db.ItemStatuses.Add(itemStatus);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            return View(itemStatus);
-        }
-
-        // GET: ItemStatus/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ItemStatus itemStatus = db.ItemStatuses.Find(id);
-            if (itemStatus == null)
-            {
-                return HttpNotFound();
-            }
-            return View(itemStatus);
-        }
-
-        // POST: ItemStatus/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Status,Decription,Code")] ItemStatus itemStatus)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(itemStatus).State = EntityState.Modified;
+                long id = long.Parse(formCollection["Id"]);
+                var dataEdit = db.ItemStatuses.Find(id);
+                dataEdit.Code = formCollection["Code"];
+                dataEdit.Status = formCollection["Status"];
+                dataEdit.Decription = formCollection["Decription"];
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
-            return View(itemStatus);
+
         }
 
-        // GET: ItemStatus/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ItemStatus itemStatus = db.ItemStatuses.Find(id);
-            if (itemStatus == null)
-            {
-                return HttpNotFound();
-            }
-            return View(itemStatus);
-        }
-
-        // POST: ItemStatus/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -114,6 +68,94 @@ namespace WebApplication1.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+        //// GET: ItemStatus/Details/5
+        //public ActionResult Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ItemStatus itemStatus = db.ItemStatuses.Find(id);
+        //    if (itemStatus == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(itemStatus);
+        //}
+
+        //// GET: ItemStatus/Create
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
+
+        //// POST: ItemStatus/Create
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create([Bind(Include = "Id,Status,Decription,Code")] ItemStatus itemStatus)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.ItemStatuses.Add(itemStatus);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    return View(itemStatus);
+        //}
+
+        // GET: ItemStatus/Edit/5
+        //public ActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ItemStatus itemStatus = db.ItemStatuses.Find(id);
+        //    if (itemStatus == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(itemStatus);
+        //}
+
+        //// POST: ItemStatus/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "Id,Status,Decription,Code")] ItemStatus itemStatus)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.Entry(itemStatus).State = EntityState.Modified;
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(itemStatus);
+        //}
+
+        //// GET: ItemStatus/Delete/5
+        //public ActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ItemStatus itemStatus = db.ItemStatuses.Find(id);
+        //    if (itemStatus == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(itemStatus);
+        //}
+
+        // POST: ItemStatus/Delete/5
+
 
         protected override void Dispose(bool disposing)
         {

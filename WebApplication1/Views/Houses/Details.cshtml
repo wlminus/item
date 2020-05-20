@@ -129,22 +129,56 @@
                     @item.Name
                 </td>
                 <td>
-                    <a class="btn btn-primary" href="@Url.Action("Edit", "Rooms", new { id = Model.Id })">Chỉnh sửa</a>
-                    <a class="btn btn-danger" href="@Url.Action("Delete", "Rooms", new { id = Model.Id })">Xóa</a>
+                    <a class="btn btn-primary" href="@Url.Action("Details", "Rooms", new { id = @item.Id })">Chi tiết</a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteRoomModal" data-id="@item.Id">Xóa</button>
                 </td>
             </tr>
         }
     </table>
 </div>
 
-<!-- Modal -->
+<!-- Modal Delete Room -->
+<div class="modal fade" id="deleteRoomModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("DeleteRoom", "Houses", FormMethod.Post))
+            {
+                <input data-val="true" id="room-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Xóa dữ liệu phòng trọ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn có muốn xóa ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create Room -->
 <div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
 
         <div class="modal-content">
             @using (Html.BeginForm("AddRoom", "Houses", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
-                @Html.HiddenFor(model => model.Id)
+                <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.Id" />
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới phòng trọ</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -172,30 +206,35 @@
                         </div>
                         <div class="col-8">
                             <h4>Thông tin</h4>
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="form-group">
                                 <label class="control-label col-md-2" for="RoomName">Tên phòng</label>
                                 <div class="col-md-10">
-                                    @Html.EditorFor(model => model.RoomName, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.RoomName, "", new { @class = "text-danger" })
+                                    <input type="text" id="RoomName" name="RoomName" class="form-control" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label col-md-2" for="RoomType">Kiểu phòng</label>
                                 <div class="col-md-10">
+                                    @Html.DropDownList("RoomType", new MultiSelectList(new List<string>(new string[] { "Phòng đơn", "Phòng đôi", "Tự do" })))
+                                </div>
+                            </div>
+
+                            @*<div class="form-group">
+                                <label class="control-label col-md-2" for="RoomType">Kiểu phòng</label>
+                                <div class="col-md-10">
                                     @Html.EditorFor(model => model.RoomType, new { htmlAttributes = new { @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.RoomType, "", new { @class = "text-danger" })
                                 </div>
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer row">
                     <div class="col-md-2"></div>
                     <div class="col-md-6">
-                        <input type="submit" value="Create" class="btn btn-primary" />
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Tạo mới" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                     </div>
                     <div class="col-md-4"></div>
                 </div>
@@ -206,7 +245,7 @@
 
 
 <h4>Thông tin đồ trong nhà</h4>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemModal">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemCreateModal">
     Thêm mới tài sản
 </button>
 <hr />
@@ -216,6 +255,12 @@
         <tr>
             <th>
                 Tài sản
+            </th>
+            <th>
+                Tên
+            </th>
+            <th>
+                Loại
             </th>
             <th>
                 Trạng thái
@@ -243,31 +288,36 @@
             @item.Name
         </td>
         <td>
+            @item.ItemCategory.Name
+        </td>
+        <td>
             @item.Status.Status
         </td>
         <td>
-            @item.AddedDate
+            <p class="date-server">@item.AddedDate</p>
         </td>
         <td>
-            <a class="btn btn-primary" href="@Url.Action("Edit", "Items", new { id = Model.Id })">Sửa thông tin</a>
-            <a class="btn btn-primary" href="@Url.Action("Edit", "ItemStatus", new { id = Model.Id })">Sửa trạng thái</a>
-            <a class="btn btn-danger" href="@Url.Action("Delete", "Rooms", new { id = Model.Id })">Xóa</a>
+            <a class="btn btn-info" href="@Url.Action("Edit", "ItemInHouses", new { id = @item.Id })">Sửa thông tin</a>
+            @*<a class="btn btn-primary" href="@Url.Action("Edit", "ItemStatus", new { id = Model.Id })">Thay đổi trạng thái</a>*@
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
         </td>
     </tr>
         }
     </table>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<!-- Item Modal -->
+<div class="modal fade" id="itemCreateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
 
         <div class="modal-content">
             @using (Html.BeginForm("AddItem", "Houses", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
-                @Html.HiddenFor(model => model.Id)
+                <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.Id" />
+                <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới phòng trọ</h5>
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Tài sản</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -293,30 +343,78 @@
                         </div>
                         <div class="col-8">
                             <h4>Thông tin</h4>
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="form-group">
-                                <label class="control-label col-md-2" for="ItemId">Tài sản</label>
+                                <label class="control-label col-md-2" for="ItemName">Tên tài sản</label>
                                 <div class="col-md-10">
-                                    @*@Html.DropDownList("ItemId", (MultiSelectList)ViewBag.ListItem)*@
+                                    <input type="text" id="ItemName" name="ItemName" class="form-control" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-md-2" for="RoomType">Trạng thái</label>
+                                <label class="control-label col-md-2" for="ItemDescription">Mô tả</label>
                                 <div class="col-md-10">
-                                    @Html.DropDownList("StatusId", (MultiSelectList)ViewBag.Status)
+                                    <textarea id="ItemDescription" name="ItemDescription" class="form-control"></textarea>
+                                    @*<input type="text" id="Description" name="Description" class="form-control" />*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="ItemCategoryId">Loại tài sản</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("ItemCategoryId", (MultiSelectList)ViewBag.ItemCategories)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Trạng thái hiện tại</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("ItemStatusId", (MultiSelectList)ViewBag.Status)
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-footer row">
                     <div class="col-md-2"></div>
                     <div class="col-md-6">
-                        <input type="submit" value="Create" class="btn btn-primary" />
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                     </div>
                     <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Item -->
+<div class="modal fade" id="deleteFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("DeleteItem", "Houses", FormMethod.Post))
+            {
+                <input data-val="true" id="delete-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Xóa dữ liệu phòng trọ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn có muốn xóa ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
                 </div>
             }
         </div>

@@ -3,7 +3,7 @@ namespace WebApplication1.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class init : DbMigration
+    public partial class iit : DbMigration
     {
         public override void Up()
         {
@@ -94,6 +94,7 @@ namespace WebApplication1.Migrations
                         Name = c.String(maxLength: 500),
                         Type = c.String(maxLength: 500),
                         Rent_User_Id = c.Int(nullable: false),
+                        HouseId = c.Int(nullable: false),
                         House_Id = c.Long(),
                     })
                 .PrimaryKey(t => t.Id)
@@ -263,12 +264,12 @@ namespace WebApplication1.Migrations
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "Avatar_Id", "dbo.Media");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.Room", "House_Id", "dbo.House");
             DropForeignKey("dbo.ItemInHouse", "StatusId", "dbo.ItemStatus");
             DropForeignKey("dbo.ItemInRoom", "Status_Id", "dbo.ItemStatus");
             DropForeignKey("dbo.RoomMedias", "Media_Id", "dbo.Media");
             DropForeignKey("dbo.RoomMedias", "Room_Id", "dbo.Room");
             DropForeignKey("dbo.ItemInRoom", "Room_Id", "dbo.Room");
+            DropForeignKey("dbo.Room", "House_Id", "dbo.House");
             DropForeignKey("dbo.ItemInRoomMedias", "Media_Id", "dbo.Media");
             DropForeignKey("dbo.ItemInRoomMedias", "ItemInRoom_Id", "dbo.ItemInRoom");
             DropForeignKey("dbo.ItemInRoom", "ItemCategory_Id", "dbo.ItemCategory");

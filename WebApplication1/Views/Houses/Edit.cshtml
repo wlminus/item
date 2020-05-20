@@ -27,6 +27,17 @@
 
             <div class="preview">
                 @Model.Medias.Count
+                @if (Model.Medias.Count > 0)
+                {
+                    foreach (var item in Model.Medias)
+                    {
+                        <img class="house-img" src="~/Media/Files/?p=@(item.Id + item.Media_Extension)&d=@item.Media_Name" />
+                    }
+                }
+                else
+                {
+                    <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+                }
             </div>
         </div>
 
@@ -89,7 +100,7 @@
     <div class="form-group row pt-5">
         <div class="col-4"></div>
         <div class="col-6">
-            @Html.ActionLink("Trở về", "Index", null, new { @class = "btn btn-secondary" })
+            <a class="btn btn-secondary" href="@Url.Action("Details", "Houses", new { id = Model.Id })">Trở về</a>
             <input type="submit" value="Thêm mới" class="btn btn-primary" />
         </div>
         <div class="col-2"></div>

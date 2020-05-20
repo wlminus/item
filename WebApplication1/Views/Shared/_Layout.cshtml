@@ -174,6 +174,17 @@
     <!-- AdminLTE for demo purposes -->
     <script src="~/Content/dist/js/demo.js"></script>
     <script>
+        //$('document').ready(function () {
+        //    $('.date-server').each(function () {
+        //        let epocValue = this.text();
+        //        let d = new Date(0);
+        //        d.setUTCSeconds(epocValue);
+
+        //        this.text(d.toLocaleString())
+
+        //    });
+        //});
+
         $(function () {
             var imagesPreview = function (input, placeToInsertImagePreview) {
 
@@ -202,6 +213,56 @@
                 $('.preview').html('');
             });
         });
+
+        $('#deleteRoomModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+
+            var modal = $(this)
+            modal.find('#room-id').attr("value", recipient)
+        })
+
+        $('#deleteFormModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+
+            var modal = $(this)
+            modal.find('#delete-id').attr("value", recipient)
+        })
+
+        $('#itemStatusModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#status-id').attr("value", null)
+                modal.find('#Code').val('')
+                modal.find('#Status').val('')
+                modal.find('#Decription').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#status-id').attr("value", recipient)
+                modal.find('#Code').val(button.data('code'))
+                modal.find('#Status').val(button.data('status'))
+                modal.find('#Decription').val(button.data('desc'))
+            }
+        })
+
+        $('#itemCategoriesModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#category-id').attr("value", null)
+                modal.find('#Name').val('')
+                modal.find('#Description').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#category-id').attr("value", recipient)
+                modal.find('#Name').val(button.data('name'))
+                modal.find('#Description').val(button.data('desc'))
+            }
+        })
     </script>
     <script type="text/javascript">
         $(function () {

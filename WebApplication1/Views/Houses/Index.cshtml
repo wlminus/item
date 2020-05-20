@@ -8,7 +8,34 @@
 <h2>Danh sách nhà cho thuê</h2>
 
 
-<a class="btn btn-primary" href="@Url.Action("Create", "Houses")">Thêm mới</a>
+<div class="row">
+    <div class="col-8">
+        @using (Html.BeginForm("Index", "ItemStatus", FormMethod.Post))
+        {
+
+            <div>
+                <input type="text" id="query" name="query" />
+
+                <input type="submit" id="search-btn" value="Tìm kiếm" class="btn btn-primary" />
+                <a class="btn btn-success" href="@Url.Action("Index", "ItemStatus")">Tải lại</a>
+            </div>
+
+        }
+
+        @{
+            if (ViewBag.SearchKey != null)
+            {
+                <span>
+                    Search Key: @ViewBag.SearchKey
+                </span>
+            }
+        }
+    </div>
+    <div class="col-4 text-right pr-5">
+        <a class="btn btn-primary" href="@Url.Action("Create", "Houses")">Thêm mới</a>
+    </div>
+</div>
+
 
 <hr />
 
