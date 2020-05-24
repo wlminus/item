@@ -42,6 +42,10 @@ namespace WebApplication1.Models
         public virtual DbSet<Media> Medias { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
+
+        public virtual DbSet<Province> Provinces { get; set; }
+        public virtual DbSet<District> Districts { get; set; }
+        public virtual DbSet<Ward> Wards { get; set; }
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

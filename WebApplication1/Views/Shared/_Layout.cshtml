@@ -174,16 +174,16 @@
     <!-- AdminLTE for demo purposes -->
     <script src="~/Content/dist/js/demo.js"></script>
     <script>
-        //$('document').ready(function () {
-        //    $('.date-server').each(function () {
-        //        let epocValue = this.text();
-        //        let d = new Date(0);
-        //        d.setUTCSeconds(epocValue);
+        $('document').ready(function () {
+            $('.date-server').each(function () {
+                let epocValue = $(this).text();
+                let d = new Date(0);
+                d.setUTCSeconds(epocValue);
 
-        //        this.text(d.toLocaleString())
+                $(this).text(d.toLocaleString())
 
-        //    });
-        //});
+            });
+        });
 
         $(function () {
             var imagesPreview = function (input, placeToInsertImagePreview) {
@@ -263,6 +263,8 @@
                 modal.find('#Description').val(button.data('desc'))
             }
         })
+
+        
     </script>
     <script type="text/javascript">
         $(function () {

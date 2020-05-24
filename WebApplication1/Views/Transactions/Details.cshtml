@@ -1,0 +1,107 @@
+﻿@model WebApplication1.Models.Transaction
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Transaction</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromHouseId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromHouseId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromRoomId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromRoomId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromStatusId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromStatusId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ToHouseId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToHouseId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ToRoomId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToRoomId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ToStatusId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToStatusId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MediaId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MediaId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsVerified)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsVerified)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VerifiedById)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VerifiedById)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -45,3 +45,15 @@
 img {
     width: 100%;
 }
+
+.history-img {
+    max-width: 200px;
+    height: auto;
+}
+.modal-xl {
+    max-width: 90%;
+}
+#history-table {
+    font-style: normal;
+    font-weight: normal;
+}

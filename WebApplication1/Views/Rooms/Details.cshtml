@@ -10,7 +10,7 @@
         <h3>Thông tin chi tiết phòng: @Model.Name</h3>
     </div>
     <div class="col-6">
-        <a class="btn btn-secondary" href="@Url.Action("Details", "Houses", new { id = Model.HouseId }))">Trở về</a>
+        <a class="btn btn-secondary" href="@Url.Action("Details", "Houses", new { id = Model.HouseId })">Trở về</a>
         <a class="btn btn-primary" href="@Url.Action("Edit", "Rooms", new { id = Model.Id })">Chỉnh sửa</a>
 
         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal">
@@ -147,7 +147,7 @@
         <div class="modal-content">
             @using (Html.BeginForm("AddItem", "Rooms", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
-                <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.Id" />
+                <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
                 <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
 
                 <div class="modal-header">

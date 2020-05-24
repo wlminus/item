@@ -1,0 +1,94 @@
+﻿@model IEnumerable<WebApplication1.Models.Transaction>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ItemId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FromHouseId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FromRoomId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FromStatusId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ToHouseId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ToRoomId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ToStatusId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MediaId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsVerified)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.VerifiedById)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ItemId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromHouseId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromRoomId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromStatusId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToHouseId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToRoomId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToStatusId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MediaId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsVerified)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.VerifiedById)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
