@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Xuất báo cáo</h2>
+
+@{Html.BeginForm("CreateReport", "Report", FormMethod.Get);
+    {
+    <p>Báo cáo danh sách thay đổi</p>      
+        <div>
+            <input type="submit" value="Xuất báo cáo" style="width:150px;height:27px" />
+        </div>
+    }
+    Html.EndForm();
+}
