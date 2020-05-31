@@ -133,6 +133,9 @@
                 <td>
                     <a class="btn btn-info" href="@Url.Action("Edit", "ItemInHouses", new { id = @item.Id })">Sửa thông tin</a>
                     @*<a class="btn btn-primary" href="@Url.Action("Edit", "ItemStatus", new { id = Model.Id })">Thay đổi trạng thái</a>*@
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#changeStatusModal" data-stid="@item.Status.Id" data-status="@item.Status.Status" data-id="@item.Id">Đổi trạng thái</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#changePlaceModal" data-id="@item.Id">Đổi địa điểm</button>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
                 </td>
             </tr>
@@ -254,3 +257,381 @@
         </div>
     </div>
 </div>
+
+
+<!-- Change Status Modal -->
+<div class="modal fade" id="changeStatusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("ChangeItemStatus", "Rooms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
+                <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
+                <input data-val="true" id="current-status-id" name="Current-Status-Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Đổi trạng thái tài sản</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-5">
+                            <h4>Trạng thái hiện tại</h4>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Trạng thái hiện tại</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="CurrentStatus" id="current-status" value="" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            =>
+                        </div>
+                        <div class="col-5">
+                            <h4>Trạng thái mới</h4>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Trạng thái mới</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("NewStatus", (MultiSelectList)ViewBag.Status)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="Description">Ghi chú</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="Description" value="" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="control-label col-md-8">Đính kèm ảnh</label>
+                                <div class="col-8">
+                                    <input class="media-img form-control" type="file" name="files" />
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" class="clear-media btn btn-warning right">Xóa</button>
+                                </div>
+                            </div>
+
+                            <div class="preview">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- History modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
+            <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
+            <input data-val="true" id="current-status-id" name="Current-Status-Id" type="hidden" />
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Lịch sử thay đổi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table" id="history-table">
+                    <tr>
+                        <th width="7%">
+                            Thời gian
+                        </th>
+                        <th>
+                            Tài sản
+                        </th>
+                        <th>
+                            Từ nhà
+                        </th>
+                        <th>
+                            Từ phòng
+                        </th>
+                        <th>
+                            Từ trạng thái
+                        </th>
+                        <th>
+                            Đến nhà
+                        </th>
+                        <th>
+                            Đến phòng
+                        </th>
+                        <th>
+                            Đến trạng thái
+                        </th>
+
+                        <th>
+                            Hình ảnh
+                        </th>
+
+                        <th>
+                            Ghi chú
+                        </th>
+
+                        <th>
+                            Đã duyệt
+                        </th>
+                    </tr>
+
+                </table>
+            </div>
+
+            <div class="modal-footer row">
+                <div class="col-md-2"></div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Place Modal -->
+<div class="modal fade" id="changePlaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("ChangeItemPlace", "Rooms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.HouseId" />
+                <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
+                <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Đổi địa điểm tài sản</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-5">
+                            <h4>Địa điểm hiện tại</h4>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8">Địa điểm hiện tại</label>
+
+                                <div class="col-md-10">
+                                    <label class="control-label col-md-8">Nhà</label>
+                                    <input type="text" name="CurrentHouse" id="current-house" value="@Model.House.Name" disabled />
+                                </div>
+
+                                <div class="col-md-10">
+                                    <label class="control-label col-md-8">Phòng</label>
+                                    <input type="text" name="CurrentRoom" id="current-room" value="@Model.Name" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            =>
+                        </div>
+                        <div class="col-5">
+                            <h4>Địa điểm mới</h4>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Nhà mới</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("NewHouse", (MultiSelectList)ViewBag.House)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Phòng mới</label>
+                                <div class="col-md-10">
+                                    <select id="NewRoom" name="NewRoom">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="Description">Ghi chú</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="Description" value="" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="control-label col-md-8">Đính kèm ảnh</label>
+                                <div class="col-8">
+                                    <input class="media-img form-control" type="file" name="files" />
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" class="clear-media btn btn-warning right">Xóa</button>
+                                </div>
+                            </div>
+
+                            <div class="preview">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $('#changeStatusModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#current-status').val('')
+                modal.find('#item-id').val('')
+                modal.find('#current-status').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#item-id').attr("value", recipient)
+                modal.find('#current-status-id').attr("value", button.data('stid'))
+                modal.find('#current-status').val(button.data('status'))
+            }
+        })
+
+        $('#changePlaceModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#item-id').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#item-id').attr("value", recipient)
+            }
+        })
+
+        $('#change-history').click(function () {
+            var url = "@Url.Action("GetHistory","Rooms")";
+            var itemId = $('#change-history').attr('data-id')
+            $.ajax({
+                type: "GET",
+                url: url + '?id=' + itemId,
+                success: function (res) {
+                    for (var i = 0; i < res.length; i++) {
+                        let img = '';
+                        if (res[i].Media) {
+                            img = `<img class="history-img" src="/Media/Files/?p=${res[i].Media.Id}${res[i].Media.Media_Extension}&d=${res[i].Media.Media_Name}" />`
+                        }
+                        else
+                        {
+                            img = `<img class="history-img" src="/Media/Files/?p=default.jpg&d=default" />`
+                        }
+                        let verify = '';
+                        if (res[i].IsVerified) {
+                            verify = `<p class="text-success">Đã duyệt</p>`
+                        } else {
+                            verify = `<p class="text-danger">Chưa duyệt</p>`
+                        }
+                        let epocValue = res[i].Date;
+                        let d = new Date(0);
+                        d.setUTCSeconds(epocValue);
+
+                        let htmlAppen = `
+                        <tr>
+                            <td>
+                                <p>${d.toLocaleString()}</p>
+                            </td>
+                            <td>
+                                ${res[i].Item}
+                            </td>
+                            <td>
+                                ${res[i].FromHouse}
+                            </td>
+                            <td>
+                                ${res[i].FromRoom}
+                            </td>
+                            <td>
+                                <p class="text-info">${res[i].FromStatus}<p>
+                            </td>
+                            <td>
+                                ${res[i].ToHouse}
+                            </td>
+                            <td>
+                                ${res[i].ToRoom}
+                            </td>
+                            <td>
+                                <p class="text-info">${res[i].ToStatus}<p>
+                            </td>
+
+                            <td>
+                                ${img}
+                            </td>
+
+                            <td>
+                                ${res[i].Description}
+                            </td>
+
+                            <td>
+                                ${verify}
+                            </td>
+                        </tr>`
+                        $('#history-table').append(htmlAppen);
+                    }
+                },
+                error: function () {
+                    alert("The scores were not recorded");
+                }
+            });
+        })
+
+        $('#NewHouse').change(function () {
+            var clientNo = $("#NewHouse").val();
+            var url = "@Url.Action("GetRoomByHouse", "Houses")";
+            $.ajax({
+                url: url + '?id=' + clientNo,
+                type: "GET",
+                success: function (result) {
+                    $("#NewRoom").html('');
+                    for (var i = 0; i < result.length; i++) {
+                        let append = `<option value="${result[i].Id}">${result[i].Name}</option>`;
+                        $("#NewRoom").append(append);
+                    }
+                },
+                error: function () {
+                    alert("An error has occured!!!");
+                }
+            });
+
+        })
+    </script>
+
+
+}

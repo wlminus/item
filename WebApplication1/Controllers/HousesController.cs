@@ -430,8 +430,23 @@ namespace WebApplication1.Controllers
         // GET: Houses/Create
         public ActionResult Create()
         {
+            var listTinh = db.Provinces.ToList();
+            ViewBag.ListProvince = new SelectList(listTinh, "Name", "Name");
             return View();
         }
+
+        public JsonResult GetDistricByProvince(string name)
+        {
+            var data = db.Districts.Include(c => c.Province).Where(r => r.Province.Name == name).ToList();
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetWardByDistric(string name)
+        {
+            var data = db.Wards.Include(c => c.District).Where(r => r.District.Name == name).ToList();
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
 
         // POST: Houses/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -486,7 +501,7 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Details", new { id = house.Id });
+            return View(house);
         }
 
         // POST: Houses/Edit/5
@@ -502,7 +517,7 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(house);
+            return RedirectToAction("Details", new { id = house.Id });
         }
 
         // GET: Houses/Delete/5

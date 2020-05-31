@@ -698,9 +698,10 @@
 
         $('#change-history').click(function () {
             var url = "@Url.Action("GetHistory","Houses")";
+            var itemId = $('#change-history').attr('data-id')
             $.ajax({
                 type: "GET",
-                url: url + '?id=' + @Model.Id,
+                url: url + '?id=' + itemId,
                 success: function (res) {
                     for (var i = 0; i < res.length; i++) {
                         let img = '';
@@ -776,6 +777,7 @@
                 url: url + '?id=' + clientNo,
                 type: "GET",
                 success: function (result) {
+                    $("#NewRoom").html('');
                     for (var i = 0; i < result.length; i++) {
                         let append = `<option value="${result[i].Id}">${result[i].Name}</option>`;
                         $("#NewRoom").append(append);
