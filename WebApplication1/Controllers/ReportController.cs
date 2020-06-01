@@ -44,49 +44,31 @@ namespace WebApplication1.Controllers
 
 				worksheet.Range["A3:A5"].CellStyle.Font.Bold = true;
 
-				worksheet.Range["D1:E1"].Merge();
+				worksheet.Range["G1:I1"].Merge();
 
-				worksheet.Range["D1"].Text = "TOAM";
-				worksheet.Range["D1"].CellStyle.Font.Bold = true;
-				worksheet.Range["D1"].CellStyle.Font.RGBColor = Color.FromArgb(42, 118, 189);
-				worksheet.Range["D1"].CellStyle.Font.Size = 35;
+				worksheet.Range["G1"].Text = "TOAM Report";
+				worksheet.Range["G1"].CellStyle.Font.Bold = true;
+				worksheet.Range["G1"].CellStyle.Font.RGBColor = Color.FromArgb(42, 118, 189);
+				worksheet.Range["G1"].CellStyle.Font.Size = 35;
 
-				//Apply alignment in the cell D1
-				worksheet.Range["D1"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignRight;
-				worksheet.Range["D1"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignTop;
+				//Apply alignment in the cell G1
+				worksheet.Range["G1"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignRight;
+				worksheet.Range["G1"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignTop;
 
-				worksheet.Range["D5:E5"].CellStyle.Color = Color.FromArgb(42, 118, 189);
-				worksheet.Range["D7:E7"].CellStyle.Color = Color.FromArgb(42, 118, 189);
-
-				//Apply known colors to the text in cells D5 to E8
-				worksheet.Range["D5:E5"].CellStyle.Font.Color = ExcelKnownColors.White;
-				worksheet.Range["D7:E7"].CellStyle.Font.Color = ExcelKnownColors.White;
-
-				//Make the text as bold from D5 to E8
-				worksheet.Range["D5:E8"].CellStyle.Font.Bold = true;
-
-				//Apply alignment to the cells from D5 to E8
-				worksheet.Range["D5:E8"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
-				worksheet.Range["D5:E5"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
-				worksheet.Range["D7:E7"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
-				worksheet.Range["D6:E6"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignTop;
-				//Apply alignment
-				worksheet.Range["A7"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
-				worksheet.Range["A7"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
-
-				worksheet.Range["A9"].Text = "  Ngày";
-				worksheet.Range["B9"].Text = "Đồ dùng";
-				worksheet.Range["C9"].Text = "Từ nhà";
-				worksheet.Range["D9"].Text = "Từ phòng";
-				worksheet.Range["E9"].Text = "Từ trạng thái";
-				worksheet.Range["F9"].Text = "Đến nhà";
-				worksheet.Range["G9"].Text = "Đến phòng";
-				worksheet.Range["H9"].Text = "Đến trạng thái";
-				worksheet.Range["I9"].Text = "Chi tiết";
+				worksheet.Range["A7"].Text = "Ngày";
+				worksheet.Range["B7"].Text = "Đồ dùng";
+				worksheet.Range["C7"].Text = "Từ nhà";
+				worksheet.Range["D7"].Text = "Từ phòng";
+				worksheet.Range["E7"].Text = "Từ trạng thái";
+				worksheet.Range["F7"].Text = "Đến nhà";
+				worksheet.Range["G7"].Text = "Đến phòng";
+				worksheet.Range["H7"].Text = "Đến trạng thái";
+				worksheet.Range["I7"].Text = "Chi tiết";
 
 				var listHistory = db.Transactions.ToList();
 				List<HistoryVM> vmData = new List<HistoryVM>();
-				var listItem = db.ItemInHouses.ToList();
+				var listItem1 = db.ItemInHouses.ToList();
+				var listItem2 = db.ItemInRooms.ToList();
 				var listStatus = db.ItemStatuses.ToList();
 				var listHouse = db.Houses.ToList();
 				var listRoom = db.Rooms.ToList();
@@ -97,7 +79,7 @@ namespace WebApplication1.Controllers
 						Date = trasn.Date,
 						ItemId = trasn.ItemId,
 
-						Item = listItem.Where(i => i.Id == trasn.ItemId).Single().Name,
+						Item = listItem1.Where(i => i.Id == trasn.ItemId).SingleOrDefault() == null ? listItem2.Where(i => i.Id == trasn.ItemId).SingleOrDefault().Name : listItem1.Where(i => i.Id == trasn.ItemId).SingleOrDefault().Name,
 
 						FromHouseId = trasn.FromHouseId,
 						FromRoomId = trasn.FromRoomId,
@@ -125,7 +107,7 @@ namespace WebApplication1.Controllers
 					};
 					vmData.Add(tmp);
 				}
-				int current = 10;
+				int current = 8;
 				foreach(var trans in vmData)
 				{
 					var cot1 = "A" + current.ToString();
@@ -155,46 +137,28 @@ namespace WebApplication1.Controllers
 					worksheet.Range[cot9].Text = trans.Description;
 					current++;
 				}
-
+				var cotcuoi = "A8:" + "I" + current.ToString();
 				//Apply borders
-				worksheet.Range["A10:E22"].CellStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
-				worksheet.Range["A10:E22"].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
-				worksheet.Range["A10:E22"].CellStyle.Borders[ExcelBordersIndex.EdgeTop].Color = ExcelKnownColors.Grey_25_percent;
-				worksheet.Range["A10:E22"].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].Color = ExcelKnownColors.Grey_25_percent;
-				worksheet.Range["A23:E23"].CellStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
-				worksheet.Range["A23:E23"].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
-				worksheet.Range["A23:E23"].CellStyle.Borders[ExcelBordersIndex.EdgeTop].Color = ExcelKnownColors.Black;
-				worksheet.Range["A23:E23"].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].Color = ExcelKnownColors.Black;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeTop].Color = ExcelKnownColors.Grey_25_percent;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].Color = ExcelKnownColors.Grey_25_percent;
 
-				//Apply font setting for cells with product details
-				worksheet.Range["A3:E23"].CellStyle.Font.FontName = "Arial";
-				worksheet.Range["A3:E23"].CellStyle.Font.Size = 10;
-				worksheet.Range["A9:I9"].CellStyle.Font.Color = ExcelKnownColors.White;
-				worksheet.Range["A9:I9"].CellStyle.Font.Bold = true;
-				worksheet.Range["D23:E23"].CellStyle.Font.Bold = true;
-
-				//Apply cell color
-				worksheet.Range["A9:I9"].CellStyle.Color = Color.FromArgb(42, 118, 189);
-
-				//Apply alignment to cells with product details
-				worksheet.Range["A9"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
-				worksheet.Range["C15:C22"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
-				//worksheet.Range["D15:E15"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
 
 				//Apply row height and column width to look good
-				worksheet.Range["A1"].ColumnWidth = 36;
-				worksheet.Range["B1"].ColumnWidth = 11;
-				worksheet.Range["C1"].ColumnWidth = 8;
-				worksheet.Range["D1:E1"].ColumnWidth = 18;
+				worksheet.Range["A1"].ColumnWidth = 22;
+				worksheet.Range["B1:H1"].ColumnWidth = 15;
+				worksheet.Range["i1"].ColumnWidth = 20;
 				worksheet.Range["A1"].RowHeight = 47;
 				worksheet.Range["A2"].RowHeight = 15;
 				worksheet.Range["A3:A4"].RowHeight = 15;
-				worksheet.Range["A5"].RowHeight = 18;
-				worksheet.Range["A6"].RowHeight = 29;
-				worksheet.Range["A7"].RowHeight = 18;
-				worksheet.Range["A8"].RowHeight = 15;
-				//worksheet.Range["A9:A14"].RowHeight = 15;
-				worksheet.Range["A9:I9"].RowHeight = 18;
+
+				worksheet.Range["A7:I7"].CellStyle.Font.Color = ExcelKnownColors.White;
+				worksheet.Range["A7:I7"].CellStyle.Font.Bold = true;
+				worksheet.Range["A7:I7"].CellStyle.Color = Color.FromArgb(42, 118, 189);
+				worksheet.Range["A7:I7"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+
+				worksheet.Range["A7:I7"].RowHeight = 20;
 
 				//Save the workbook to disk in xlsx format
 				workbook.SaveAs("Report.xlsx", HttpContext.ApplicationInstance.Response, ExcelDownloadType.Open);
