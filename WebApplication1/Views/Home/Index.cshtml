@@ -1,24 +1,111 @@
-﻿@{
+﻿@model IEnumerable<WebApplication1.Models.House>
+
+@{
     ViewBag.Title = "Home Page";
     Layout = null;
 }
 
-<link href="~/Content/login.css" rel="stylesheet" />
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Phần mềm quản lý tài sản</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div class="wrapper fadeInDown">
-    <div id="formContent">
-        <!-- Tabs Titles -->
-        <!-- Icon -->
-        <div class="fadeIn first">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTmp7Zkhf_H_iJDUGaaRhchdSo0Qt6xUqQJ2HxC9kmAvpvmhxG6&usqp=CAU" id="icon" alt="User Icon" />
+    @*@Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")*@
+
+    <link rel="stylesheet" href="~/Content/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="~/Content/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="~/Content/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="~/Content/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" href="~/Content/dist/css/adminlte.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body class="hold-transition">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">TOAM Rent</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                @*<li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>*@
+
+                @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+                {
+
+                    <div>
+                        <input type="text" id="query" name="query" />
+
+                        <input type="submit" id="search-btn" value="Tìm kiếm" class="btn btn-primary" />
+                        <a class="btn btn-success" href="@Url.Action("Index", "Home")">Tải lại</a>
+                    </div>
+
+                }
+
+                @{
+                    if (ViewBag.SearchKey != null)
+                    {
+                        <span>
+                            Search Key: @ViewBag.SearchKey
+                        </span>
+                    }
+                }
+            </ul>
+            @Html.Partial("_LoginPartial")
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <h2>Danh sách nhà cho thuê</h2>
+
+
+        <div class="row">
+            <div class="col-8">
+                
+            </div>
         </div>
 
-        <!-- Login Form -->
-        <form>
-            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-            <input type="password" id="password" class="fadeIn third" name="login" placeholder="password">
-            <input type="submit" class="fadeIn fourth" value="Log In">
-        </form>
 
+        <hr />
+
+        <div class="content-house">
+            @foreach (var item in Model)
+            {
+                <a class="house-item" href="@Url.Action("Details", "Home", new { id=item.Id })">
+                    <div>
+                        <div class="house-thumb">
+                            @if (item.Medias.Count > 0)
+                            {
+                                <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
+                            }
+                            else
+                            {
+                                <img class="house-thumb-img" src="~/Media/Files/?p=default.jpg&d=default" />
+                            }
+                        </div>
+                        <div class="row house-content">
+                            <div class="col-6">
+                                @item.Name
+                            </div>
+                            <div class="col-6 text-right">
+                                @item.Location
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
     </div>
-</div>
+</body>
+</html>
+
+

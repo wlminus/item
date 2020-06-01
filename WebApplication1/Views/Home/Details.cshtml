@@ -1,0 +1,361 @@
+﻿@model WebApplication1.Models.HouseViewModel
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-6">
+        <h2>Thông tin chi tiết</h2>
+    </div>
+    <div class="col-6">
+        <a class="btn btn-secondary" href="@Url.Action("Index", "Home")">Trở về</a>
+    </div>
+</div>
+
+
+<h4>Thông tin chung</h4>
+<hr />
+<div class="row">
+
+    <div class="col-6">
+        @if (Model.Medias.Count > 0)
+        {
+            foreach (var item in Model.Medias)
+            {
+                <img class="house-img" src="~/Media/Files/?p=@(item.Id + item.Media_Extension)&d=@item.Media_Name" />
+            }
+        }
+        else
+        {
+            <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+        }
+    </div>
+    <div class="col-6">
+        <p>
+            Tên: @Model.Name
+        </p>
+        <p>
+            Địa chỉ: @Model.Location
+        </p>
+        <p>
+            Quận/Huyện: @Model.District
+        </p>
+        <p>
+            Tỉnh: @Model.Province
+        </p>
+        <p>
+            Chi tiết: @Model.Description
+        </p>
+        <p>
+            Số phòng: @Model.Room_Count
+        </p>
+        <p>
+            Trạng thái: @Model.Status
+        </p>
+    </div>
+</div>
+
+
+<h4>Thông tin phòng</h4>
+<hr />
+
+<div class="room-wrap">
+    <table class="table">
+        <tr>
+            <th>
+                Ảnh
+            </th>
+            <th>
+                Phòng
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Rooms)
+        {
+            <tr>
+                <td width="20%">
+                    @if (item.Medias.Count > 0)
+                    {
+                        <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
+                    }
+                    else
+                    {
+                        <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+                    }
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <a class="btn btn-primary" href="@Url.Action("RoomDetails", "Home", new { id = @item.Id })">Chi tiết</a>
+    
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+<h4>Thông tin đồ trong nhà</h4>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemCreateModal">
+    Thêm mới tài sản
+</button>
+<hr />
+
+<div class="room-wrap">
+    <table class="table">
+        <tr>
+            <th>
+                Tài sản
+            </th>
+            <th>
+                Tên
+            </th>
+            <th>
+                Loại
+            </th>
+            <th>
+                Trạng thái
+            </th>
+            <th>
+                Ngày thêm
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td width="20%">
+                    @if (item.Medias.Count > 0)
+                    {
+                        <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
+                    }
+                    else
+                    {
+                        <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
+                    }
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.ItemCategory.Name
+                </td>
+                <td>
+                    @item.Status.Status
+                </td>
+                <td>
+                    <p class="date-server">@item.AddedDate</p>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>                                     
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<!-- History modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.Id" />
+            <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
+            <input data-val="true" id="current-status-id" name="Current-Status-Id" type="hidden" />
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Lịch sử thay đổi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table" id="history-table">
+                    <tr>
+                        <th width="7%">
+                            Thời gian
+                        </th>
+                        <th>
+                            Tài sản
+                        </th>
+                        <th>
+                            Từ nhà
+                        </th>
+                        <th>
+                            Từ phòng
+                        </th>
+                        <th>
+                            Từ trạng thái
+                        </th>
+                        <th>
+                            Đến nhà
+                        </th>
+                        <th>
+                            Đến phòng
+                        </th>
+                        <th>
+                            Đến trạng thái
+                        </th>
+
+                        <th>
+                            Hình ảnh
+                        </th>
+
+                        <th>
+                            Ghi chú
+                        </th>
+
+                        <th>
+                            Đã duyệt
+                        </th>
+                    </tr>
+
+                </table>
+            </div>
+
+            <div class="modal-footer row">
+                <div class="col-md-2"></div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $('#changeStatusModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#current-status').val('')
+                modal.find('#item-id').val('')
+                modal.find('#current-status').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#item-id').attr("value", recipient)
+                modal.find('#current-status-id').attr("value", button.data('stid'))
+                modal.find('#current-status').val(button.data('status'))
+            }
+        })
+
+        $('#changePlaceModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#item-id').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#item-id').attr("value", recipient)
+            }
+        })
+
+        $('#change-history').click(function () {
+            var url = "@Url.Action("GetHistory","Houses")";
+            var itemId = $('#change-history').attr('data-id')
+            $.ajax({
+                type: "GET",
+                url: url + '?id=' + itemId,
+                success: function (res) {
+                    for (var i = 0; i < res.length; i++) {
+                        let img = '';
+                        if (res[i].Media) {
+                            img = `<img class="history-img" src="/Media/Files/?p=${res[i].Media.Id}${res[i].Media.Media_Extension}&d=${res[i].Media.Media_Name}" />`
+                        }
+                        else
+                        {
+                            img = `<img class="history-img" src="/Media/Files/?p=default.jpg&d=default" />`
+                        }
+                        let verify = '';
+                        if (res[i].IsVerified) {
+                            verify = `<p class="text-success">Đã duyệt</p>`
+                        } else {
+                            verify = `<p class="text-danger">Chưa duyệt</p>`
+                        }
+                        let epocValue = res[i].Date;
+                        let d = new Date(0);
+                        d.setUTCSeconds(epocValue);
+
+                        let htmlAppen = `
+                        <tr>
+                            <td>
+                                <p>${d.toLocaleString()}</p>
+                            </td>
+                            <td>
+                                ${res[i].Item}
+                            </td>
+                            <td>
+                                ${res[i].FromHouse}
+                            </td>
+                            <td>
+                                ${res[i].FromRoom}
+                            </td>
+                            <td>
+                                <p class="text-info">${res[i].FromStatus}<p>
+                            </td>
+                            <td>
+                                ${res[i].ToHouse}
+                            </td>
+                            <td>
+                                ${res[i].ToRoom}
+                            </td>
+                            <td>
+                                <p class="text-info">${res[i].ToStatus}<p>
+                            </td>
+
+                            <td>
+                                ${img}
+                            </td>
+
+                            <td>
+                                ${res[i].Description}
+                            </td>
+
+                            <td>
+                                ${verify}
+                            </td>
+                        </tr>`
+                        $('#history-table').append(htmlAppen);
+                    }
+                },
+                error: function () {
+                    alert("The scores were not recorded");
+                }
+            });
+        })
+
+        $('#NewHouse').change(function () {
+            var clientNo = $("#NewHouse").val();
+            var url = "@Url.Action("GetRoomByHouse", "Houses")";
+            $.ajax({
+                url: url + '?id=' + clientNo,
+                type: "GET",
+                success: function (result) {
+                    $("#NewRoom").html('');
+                    for (var i = 0; i < result.length; i++) {
+                        let append = `<option value="${result[i].Id}">${result[i].Name}</option>`;
+                        $("#NewRoom").append(append);
+                    }
+                },
+                error: function () {
+                    alert("An error has occured!!!");
+                }
+            });
+
+        })
+    </script>
+
+
+}
+
