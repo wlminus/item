@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,10 +16,110 @@ namespace WebApplication1.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Transactions
-        public ActionResult Index()
+        //public ActionResult Index()
+        //{
+        //    return View(db.Transactions.ToList());
+        //}
+
+
+
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            return View(db.Transactions.ToList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.TypeSortParm = sortOrder == "type" ? "date_desc" : "type";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var listHistory = db.Transactions.ToList();
+            List<HistoryVM> vmData = new List<HistoryVM>();
+            var listItem = db.ItemInHouses.ToList();
+            var listStatus = db.ItemStatuses.ToList();
+            var listHouse = db.Houses.ToList();
+            var listRoom = db.Rooms.ToList();
+            foreach (var trasn in listHistory)
+            {
+                HistoryVM tmp = new HistoryVM()
+                {
+                    Date = trasn.Date,
+                    ItemId = trasn.ItemId,
+
+                    Item = listItem.Where(i => i.Id == trasn.ItemId).Single().Name,
+
+                    FromHouseId = trasn.FromHouseId,
+                    FromRoomId = trasn.FromRoomId,
+                    FromStatusId = trasn.FromStatusId,
+
+                    FromHouse = trasn.FromHouseId == 0 ? "KTD" : listHouse.Where(h => h.Id == trasn.FromHouseId).Single().Name,
+                    FromRoom = trasn.FromRoomId == 0 ? "KTD" : listRoom.Where(h => h.Id == trasn.FromRoomId).Single().Name,
+                    FromStatus = trasn.FromStatusId == 0 ? "KTD" : listStatus.Where(s => s.Id == trasn.FromStatusId).Single().Status,
+
+
+                    ToHouseId = trasn.ToHouseId,
+                    ToRoomId = trasn.ToRoomId,
+                    ToStatusId = trasn.ToStatusId,
+
+                    ToHouse = trasn.ToHouseId == 0 ? "KTD" : listHouse.Where(h => h.Id == trasn.ToHouseId).Single().Name,
+                    ToRoom = trasn.ToRoomId == 0 ? "KTD" : listRoom.Where(h => h.Id == trasn.ToRoomId).Single().Name,
+                    ToStatus = trasn.ToStatusId == 0 ? "KTD" : listStatus.Where(s => s.Id == trasn.ToStatusId).Single().Status,
+
+                    MediaId = trasn.MediaId,
+                    Media = trasn.Media,
+
+                    IsVerified = trasn.IsVerified,
+
+                    Description = trasn.Description
+                };
+                vmData.Add(tmp);
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                vmData = vmData.Where(s => s.FromHouse.Contains(searchString)
+                                       || s.FromRoom.Contains(searchString)
+                                       || s.FromStatus.Contains(searchString)
+                                       || s.ToHouse.Contains(searchString)
+                                       || s.ToRoom.Contains(searchString)
+                                       || s.ToStatus.Contains(searchString)).ToList();
+            }
+            switch (sortOrder)
+            {
+                case "from_house_desc":
+                    vmData = vmData.OrderByDescending(s => s.FromHouse).ToList();
+                    break;
+                case "from_house":
+                    vmData = vmData.OrderBy(s => s.FromHouse).ToList();
+                    break;
+                case "date_desc":
+                    vmData = vmData.OrderByDescending(s => s.Date).ToList();
+                    break;
+                default:  // Name ascending 
+                    vmData = vmData.OrderBy(s => s.Date).ToList();
+                    break;
+            }
+
+            int pageSize = 40;
+            int pageNumber = (page ?? 1);
+            return View(vmData.ToPagedList(pageNumber, pageSize));
         }
+
+
+
+
+
+
+
+
+
 
         // GET: Transactions/Details/5
         public ActionResult Details(long? id)
