@@ -1,19 +1,19 @@
-﻿@model WebApplication1.Models.HouseViewModel
+﻿@model WebApplication1.Models.Room
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "RoomDetails";
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
 
 
 <div class="row">
     <div class="col-6">
-        <h2>Thông tin chi tiết</h2>
+        <h3>Thông tin chi tiết phòng: @Model.Name</h3>
     </div>
     <div class="col-6">
-        <a class="btn btn-secondary" href="@Url.Action("Index", "Home")">Trở về</a>
+        <a class="btn btn-secondary" href="@Url.Action("Details", "Home", new { id = Model.HouseId })">Trở về</a>
+        <a class="btn btn-success" href="@Url.Action("Rent", "Home", new { id = Model.HouseId })">Thuê</a>
     </div>
 </div>
-
 
 <h4>Thông tin chung</h4>
 <hr />
@@ -37,70 +37,12 @@
             Tên: @Model.Name
         </p>
         <p>
-            Địa chỉ: @Model.Location
-        </p>
-        <p>
-            Quận/Huyện: @Model.District
-        </p>
-        <p>
-            Tỉnh: @Model.Province
-        </p>
-        <p>
-            Chi tiết: @Model.Description
-        </p>
-        <p>
-            Số phòng: @Model.Room_Count
-        </p>
-        <p>
-            Trạng thái: @Model.Status
+            Kiểu phòng: @Model.Type
         </p>
     </div>
 </div>
 
-
-<h4>Thông tin phòng</h4>
-<hr />
-
-<div class="room-wrap">
-    <table class="table">
-        <tr>
-            <th>
-                Ảnh
-            </th>
-            <th>
-                Phòng
-            </th>
-            <th></th>
-        </tr>
-
-        @foreach (var item in Model.Rooms)
-        {
-            <tr>
-                <td width="20%">
-                    @if (item.Medias.Count > 0)
-                    {
-                        <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
-                    }
-                    else
-                    {
-                        <img class="house-img" src="~/Media/Files/?p=default.jpg&d=default" />
-                    }
-                </td>
-                <td>
-                    @item.Name
-                </td>
-                <td>
-                    <a class="btn btn-primary" href="@Url.Action("RoomDetails", "Home", new { id = @item.Id })">Chi tiết</a>
-    
-                </td>
-            </tr>
-        }
-    </table>
-</div>
-
-
-<h4>Thông tin đồ trong nhà</h4>
-
+<h4>Thông tin đồ trong phòng</h4>
 <hr />
 
 <div class="room-wrap">
@@ -150,19 +92,20 @@
                     <p class="date-server">@item.AddedDate</p>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>                                     
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>
                 </td>
             </tr>
         }
     </table>
 </div>
 
+
 <!-- History modal -->
 <div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
 
         <div class="modal-content">
-            <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.Id" />
+            <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
             <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
             <input data-val="true" id="current-status-id" name="Current-Status-Id" type="hidden" />
 
@@ -228,6 +171,102 @@
     </div>
 </div>
 
+<!-- Change Place Modal -->
+<div class="modal fade" id="changePlaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("ChangeItemPlace", "Rooms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.HouseId" />
+                <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
+                <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Đổi địa điểm tài sản</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-5">
+                            <h4>Địa điểm hiện tại</h4>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8">Địa điểm hiện tại</label>
+
+                                <div class="col-md-10">
+                                    <label class="control-label col-md-8">Nhà</label>
+                                    <input type="text" name="CurrentHouse" id="current-house" value="@Model.House.Name" disabled />
+                                </div>
+
+                                <div class="col-md-10">
+                                    <label class="control-label col-md-8">Phòng</label>
+                                    <input type="text" name="CurrentRoom" id="current-room" value="@Model.Name" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            =>
+                        </div>
+                        <div class="col-5">
+                            <h4>Địa điểm mới</h4>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Nhà mới</label>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("NewHouse", (MultiSelectList)ViewBag.House)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="ItemStatusId">Phòng mới</label>
+                                <div class="col-md-10">
+                                    <select id="NewRoom" name="NewRoom">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-8" for="Description">Ghi chú</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="Description" value="" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="control-label col-md-8">Đính kèm ảnh</label>
+                                <div class="col-8">
+                                    <input class="media-img form-control" type="file" name="files" />
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" class="clear-media btn btn-warning right">Xóa</button>
+                                </div>
+                            </div>
+
+                            <div class="preview">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
     <script>
@@ -260,7 +299,7 @@
         })
 
         $('#change-history').click(function () {
-            var url = "@Url.Action("GetHistory","Houses")";
+            var url = "@Url.Action("GetHistory","Rooms")";
             var itemId = $('#change-history').attr('data-id')
             $.ajax({
                 type: "GET",
@@ -356,4 +395,3 @@
 
 
 }
-

@@ -1,46 +1,184 @@
-﻿@model IEnumerable<WebApplication1.Models.Ward>
+﻿@model PagedList.IPagedList<WebApplication1.Models.Ward>
+@using PagedList.Mvc;
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h3>Danh mục phường/xã</h3>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<div class="row">
+    <div class="col-8">
+        @using (Html.BeginForm())
+        {
+            <div>
+                <input type="text" id="SearchString" name="SearchString" />
+
+                <input type="submit" id="search-btn" value="Tìm kiếm" class="btn btn-primary" />
+                <a class="btn btn-success" href="@Url.Action("Index", "Wards")">Tải lại</a>
+            </div>
+        }
+    </div>
+    <div class="col-4 text-right">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#wardModal">
+            Tạo mới
+        </button>
+    </div>
+</div>
+
+<br />
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.District.Name)
+            @Html.ActionLink("Tên", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.ActionLink("Loại", "Index", new { sortOrder = ViewBag.TypeSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Type)
+            Thuộc quận/huyện
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.District.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.District.Name)
+            </td>
+            <td>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#wardModal"
+                        data-id="@item.Id" data-name="@item.Name" data-type="@item.Type">
+                    Chỉnh sửa
+                </button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
+            </td>
+        </tr>
+    }
 
 </table>
+
+<div class="row justify-content-center">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+
+
+<!-- Modal Delete -->
+<div class="modal fade" id="deleteFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("Delete", "Wards", FormMethod.Post))
+            {
+                <input data-val="true" id="delete-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Xóa dữ liệu trạng thái?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn có muốn xóa ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create ItemStatus -->
+<div class="modal fade" id="wardModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+
+        <div class="modal-content">
+            @using (Html.BeginForm("Add", "Wards", FormMethod.Post))
+            {
+                <input data-val="true" id="province-id" name="Id" type="hidden" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới Phường/Xã</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Name">Tên</label>
+                        <div class="col-md-10">
+                            <input type="text" id="Name" name="Name" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Status">Loại</label>
+                        <div class="col-md-10">
+                            <select name="Type" class="form-control">
+                                <option value="Phường">Phường</option>
+                                <option value="Xã">Xã</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Status">Quận/Huyện</label>
+                        <div class="col-md-10">
+                            @Html.DropDownList("District", (MultiSelectList)ViewBag.District)
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $('#wardModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            if (recipient == null) {
+                var modal = $(this)
+                modal.find('#province-id').attr("value", null)
+                modal.find('#Name').val('')
+                modal.find('#Type').val('')
+            } else {
+                var modal = $(this)
+                modal.find('#province-id').attr("value", recipient)
+                modal.find('#Name').val(button.data('name'))
+                modal.find('#Type').val(button.data('type'))
+            }
+        })
+    </script>
+}

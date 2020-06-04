@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,13 +16,96 @@ namespace WebApplication1.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Wards
-        public ActionResult Index()
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            var wards = db.Wards.Include(w => w.District);
-            return View(wards.ToList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.TypeSortParm = sortOrder == "type" ? "date_desc" : "type";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var wards = from s in db.Wards join sup in db.Districts on s.DistrictId equals sup.Id select s;
+            var district = db.Districts.ToList();
+            ViewBag.District = new MultiSelectList(district, "Id", "Name");
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                wards = wards.Where(s => s.Name.Contains(searchString)
+                                       || s.Type.Contains(searchString) 
+                                       || s.District.Name.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    wards = wards.OrderByDescending(s => s.Name);
+                    break;
+                case "type":
+                    wards = wards.OrderBy(s => s.Type);
+                    break;
+                case "date_desc":
+                    wards = wards.OrderByDescending(s => s.Type);
+                    break;
+                default:  // Name ascending 
+                    wards = wards.OrderBy(s => s.Name);
+                    break;
+            }
+
+            int pageSize = 40;
+            int pageNumber = (page ?? 1);
+            return View(wards.ToPagedList(pageNumber, pageSize));
         }
 
-        // GET: Wards/Details/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Add(FormCollection formCollection)
+        {
+            if (string.IsNullOrEmpty(formCollection["Id"]))
+            {
+                Ward ward = new Ward()
+                {
+                    Name = formCollection["Name"],
+                    Type = formCollection["Type"],
+                    DistrictId = long.Parse(formCollection["District"])
+                };
+
+                db.Wards.Add(ward);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                long id = long.Parse(formCollection["Id"]);
+                var dataEdit = db.Wards.Find(id);
+                dataEdit.Name = formCollection["Name"];
+                dataEdit.Type = formCollection["Type"];
+                dataEdit.DistrictId = long.Parse(formCollection["District"]);
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         public ActionResult Details(long? id)
         {
             if (id == null)

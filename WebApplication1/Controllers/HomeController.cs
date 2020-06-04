@@ -59,7 +59,29 @@ namespace WebApplication1.Controllers
         }
 
 
+        public ActionResult RoomDetails(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Room room = db.Rooms.
+                Include(r => r.Medias).Include(r => r.Items).Include(r => r.House)
+                .Where(r => r.Id == id).SingleOrDefault();
 
+            var status = db.ItemStatuses.ToList();
+            ViewBag.Status = new MultiSelectList(status, "Id", "Status");
+            var cat = db.ItemCategories.ToList();
+            ViewBag.ItemCategories = new MultiSelectList(cat, "Id", "Name");
+            var hause = db.Houses.ToList();
+            ViewBag.House = new MultiSelectList(hause, "Id", "Name");
+
+            if (room == null)
+            {
+                return HttpNotFound();
+            }
+            return View(room);
+        }
 
 
 

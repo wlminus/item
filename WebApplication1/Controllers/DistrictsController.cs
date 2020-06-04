@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,11 +16,99 @@ namespace WebApplication1.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Districts
-        public ActionResult Index()
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            var districts = db.Districts.Include(d => d.Province);
-            return View(districts.ToList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.TypeSortParm = sortOrder == "type" ? "date_desc" : "type";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var district = from s in db.Districts join sup in db.Provinces on s.ProvinceId equals sup.Id select s;
+            var provinces = db.Provinces.ToList();
+            ViewBag.Province = new MultiSelectList(provinces, "Id", "Name");
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                district = district.Where(s => s.Name.Contains(searchString)
+                                       || s.Type.Contains(searchString)
+                                       || s.Province.Name.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    district = district.OrderByDescending(s => s.Name);
+                    break;
+                case "type":
+                    district = district.OrderBy(s => s.Type);
+                    break;
+                case "date_desc":
+                    district = district.OrderByDescending(s => s.Type);
+                    break;
+                default:  // Name ascending 
+                    district = district.OrderBy(s => s.Name);
+                    break;
+            }
+
+            int pageSize = 20;
+            int pageNumber = (page ?? 1);
+            return View(district.ToPagedList(pageNumber, pageSize));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Add(FormCollection formCollection)
+        {
+            if (string.IsNullOrEmpty(formCollection["Id"]))
+            {
+                District district = new District()
+                {
+                    Name = formCollection["Name"],
+                    Type = formCollection["Type"],
+                    ProvinceId = long.Parse(formCollection["Province"])
+                };
+
+                db.Districts.Add(district);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                long id = long.Parse(formCollection["Id"]);
+                var dataEdit = db.Districts.Find(id);
+                dataEdit.Name = formCollection["Name"];
+                dataEdit.Type = formCollection["Type"];
+                dataEdit.ProvinceId = long.Parse(formCollection["Province"]);
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // GET: Districts/Details/5
         public ActionResult Details(long? id)
