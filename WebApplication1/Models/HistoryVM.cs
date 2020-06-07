@@ -7,6 +7,7 @@ namespace WebApplication1.Models
 {
     public class HistoryVM
     {
+        public long Id { get; set; }
         public long Date { get; set; }
 
         public long ItemId { get; set; }

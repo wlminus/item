@@ -5,12 +5,15 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize(Roles = "ROLE_ADMIN")]
     public class RoomsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -18,8 +21,84 @@ namespace WebApplication1.Controllers
         // GET: Rooms
         public ActionResult Index()
         {
-            return View(db.Rooms.ToList());
+            return View(db.Rooms.Include(r => r.House).ToList());
         }
+
+        public ActionResult Uncheck()
+        {
+            var data = db.Rooms.Include(r => r.House).Where(r => r.RentUser != null && r.Verified == false).ToList();
+            return View(data);
+        }
+
+
+        public ActionResult Decline(FormCollection formCollection)
+        {
+            long roomId = long.Parse(formCollection["Id"]);
+
+            var rm = db.Rooms.Find(roomId);
+            rm.RentUser = null;
+
+            db.SaveChanges();
+
+            return RedirectToAction("Uncheck");
+        }
+
+        public async Task<ActionResult> Accept(FormCollection formCollection)
+        {
+            long roomId = long.Parse(formCollection["Id"]);
+
+            var rm = db.Rooms.Find(roomId);
+            rm.Verified = true;
+
+            
+            var message = new MailMessage();
+            message.To.Add(new MailAddress(rm.RentUser));
+            message.From = new MailAddress(Constant.EMAIL_ADDRESS);
+            message.Subject = "Yêu cầu thuê được phê duyệt";
+            var itemBody = "<p>Yêu cầu thuê phòng: {0} đã được chấp thuận </p>";
+            itemBody += @"<table class='table'>
+                                <tr>
+                                    <th>Tài sản</th>
+                                    <th>Tên</th>
+                                    <th>Loại</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày thêm
+                                    </th>
+                                </tr>";
+
+            var itemlst = db.ItemInRooms.Include(t => t.Status).Where(it => it.RoomId == roomId).ToList();
+            foreach(var item in itemlst)
+            {
+                itemBody += @"<tr><td></td>
+                            <td>" + item.Name + @"</td>
+                            <td>" + item.ItemCategory.Name + @"</td>
+                            <td>" + item.Status.Status + @"</td>
+                            <td>" + item.AddedDate + @"</td></tr>";
+            }
+            itemBody += "</table>";
+
+            message.Body = string.Format(itemBody, rm.Name);
+            message.IsBodyHtml = true;
+
+            using (var smtp = new SmtpClient())
+            {
+                var credential = new NetworkCredential
+                {
+                    UserName = Constant.EMAIL_ADDRESS,
+                    Password = Constant.EMAIL_PASSWORD
+                };
+                smtp.Credentials = credential;
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                await smtp.SendMailAsync(message);
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("Uncheck");
+        }
+
 
         // GET: Rooms/Details/5
         public ActionResult Details(int? id)

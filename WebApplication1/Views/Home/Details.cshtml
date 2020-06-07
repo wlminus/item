@@ -91,7 +91,7 @@
                 </td>
                 <td>
                     <a class="btn btn-primary" href="@Url.Action("RoomDetails", "Home", new { id = @item.Id })">Chi tiết</a>
-    
+
                 </td>
             </tr>
         }
@@ -150,7 +150,7 @@
                     <p class="date-server">@item.AddedDate</p>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>                                     
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>
                 </td>
             </tr>
         }
@@ -231,33 +231,6 @@
 @section Scripts
 {
     <script>
-        $('#changeStatusModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var recipient = button.data('id')
-            if (recipient == null) {
-                var modal = $(this)
-                modal.find('#current-status').val('')
-                modal.find('#item-id').val('')
-                modal.find('#current-status').val('')
-            } else {
-                var modal = $(this)
-                modal.find('#item-id').attr("value", recipient)
-                modal.find('#current-status-id').attr("value", button.data('stid'))
-                modal.find('#current-status').val(button.data('status'))
-            }
-        })
-
-        $('#changePlaceModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var recipient = button.data('id')
-            if (recipient == null) {
-                var modal = $(this)
-                modal.find('#item-id').val('')
-            } else {
-                var modal = $(this)
-                modal.find('#item-id').attr("value", recipient)
-            }
-        })
 
         $('#change-history').click(function () {
             var url = "@Url.Action("GetHistory","Houses")";
@@ -266,6 +239,7 @@
                 type: "GET",
                 url: url + '?id=' + itemId,
                 success: function (res) {
+                    $('#history-table').html('');
                     for (var i = 0; i < res.length; i++) {
                         let img = '';
                         if (res[i].Media) {
@@ -333,25 +307,7 @@
             });
         })
 
-        $('#NewHouse').change(function () {
-            var clientNo = $("#NewHouse").val();
-            var url = "@Url.Action("GetRoomByHouse", "Houses")";
-            $.ajax({
-                url: url + '?id=' + clientNo,
-                type: "GET",
-                success: function (result) {
-                    $("#NewRoom").html('');
-                    for (var i = 0; i < result.length; i++) {
-                        let append = `<option value="${result[i].Id}">${result[i].Name}</option>`;
-                        $("#NewRoom").append(append);
-                    }
-                },
-                error: function () {
-                    alert("An error has occured!!!");
-                }
-            });
 
-        })
     </script>
 
 

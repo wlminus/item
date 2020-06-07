@@ -18,8 +18,11 @@ namespace WebApplication1.Models
         [StringLength(500)]
         public string Type { get; set; }
 
-        [Column("Rent_User_Id")]
-        public int Rent_User_Id { get; set; }
+        [Column("RentUser")]
+        public string RentUser { get; set; }
+
+        [Column("Verified")]
+        public bool Verified { get; set; }
 
         public long HouseId { get; set; }
         public House House { get; set; }

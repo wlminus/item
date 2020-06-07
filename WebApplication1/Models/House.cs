@@ -37,9 +37,6 @@ namespace WebApplication1.Models
         [StringLength(100)]
         public string Status { get; set; }
 
-        [Column("Rent_User_Id")]
-        public int? Rent_User_Id { get; set; }
-
         public virtual ICollection<Media> Medias { get; set; }
 
         public virtual ICollection<Room> Rooms { get; set; }

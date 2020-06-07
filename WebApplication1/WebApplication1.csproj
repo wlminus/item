@@ -201,9 +201,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005241728281_init.cs" />
-    <Compile Include="Migrations\202005241728281_init.Designer.cs">
-      <DependentUpon>202005241728281_init.cs</DependentUpon>
+    <Compile Include="Migrations\202006070644330_int.cs" />
+    <Compile Include="Migrations\202006070644330_int.Designer.cs">
+      <DependentUpon>202006070644330_int.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -483,6 +483,13 @@
     <Content Include="Views\Shared\_LayoutHome.cshtml" />
     <Content Include="Views\Home\Details.cshtml" />
     <Content Include="Views\Home\RoomDetails.cshtml" />
+    <Content Include="Views\Account\HomeRegister.cshtml" />
+    <Content Include="Views\Home\Rent.cshtml" />
+    <Content Include="Views\Users\Me.cshtml" />
+    <Content Include="Views\Users\ChangePassword.cshtml" />
+    <Content Include="Views\Houses\Me.cshtml" />
+    <Content Include="Views\Rooms\Uncheck.cshtml" />
+    <Content Include="Views\Users\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -501,8 +508,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202005241728281_init.resx">
-      <DependentUpon>202005241728281_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202006070644330_int.resx">
+      <DependentUpon>202006070644330_int.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

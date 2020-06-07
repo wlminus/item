@@ -1,3 +1,4 @@
+SET IDENTITY_INSERT dbo.Wards ON;
 INSERT INTO dbo.Wards(Id,Name,Type,DistrictId) VALUES
 (23443, N'Xã Pô Kô', N'Xã', 612),
 (23446, N'Xã Tê Xăng', N'Xã', 617),

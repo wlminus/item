@@ -15,4 +15,10 @@ namespace WebApplication1.Models
         public static string ROLE_MANAGER = "ROLE_MANAGER";
         public static string ROLE_USER = "ROLE_USER";
     }
+
+    public static class Constant
+    {
+        public static string EMAIL_ADDRESS = "toam.rent@gmail.com";
+        public static string EMAIL_PASSWORD = "AAssdd12@123";
+    }
 }

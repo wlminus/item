@@ -188,6 +188,7 @@ namespace WebApplication1.Models
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.Email = user.Email;
+            this.Avatar = user.Avatar;
         }
   
         [Required]
@@ -204,6 +205,8 @@ namespace WebApplication1.Models
   
         [Required]
         public string Email { get; set; }
+
+        public Media Avatar { get; set; }
     }
   
   

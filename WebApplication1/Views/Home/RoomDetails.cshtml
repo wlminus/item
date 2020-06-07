@@ -11,7 +11,42 @@
     </div>
     <div class="col-6">
         <a class="btn btn-secondary" href="@Url.Action("Details", "Home", new { id = Model.HouseId })">Trở về</a>
-        <a class="btn btn-success" href="@Url.Action("Rent", "Home", new { id = Model.HouseId })">Thuê</a>
+        
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+            Đăng kí thuê
+        </button>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("Rent", "Home", FormMethod.Post))
+            {
+                @Html.HiddenFor(model => model.Id)
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Đăng kí thuê phòng trọ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    Bạn muốn đăng kí thuê phòng ?
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Đăng kí" class="btn btn-success" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
@@ -171,132 +206,11 @@
     </div>
 </div>
 
-<!-- Change Place Modal -->
-<div class="modal fade" id="changePlaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
 
-        <div class="modal-content">
-            @using (Html.BeginForm("ChangeItemPlace", "Rooms", FormMethod.Post, new { enctype = "multipart/form-data" }))
-            {
-                <input data-val="true" id="house-id" name="House-Id" type="hidden" value="@Model.HouseId" />
-                <input data-val="true" id="room-id" name="Room-Id" type="hidden" value="@Model.Id" />
-                <input data-val="true" id="item-id" name="Item-Id" type="hidden" />
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Đổi địa điểm tài sản</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    @Html.AntiForgeryToken()
-                    <div class="row">
-                        <div class="col-5">
-                            <h4>Địa điểm hiện tại</h4>
-
-                            <div class="form-group">
-                                <label class="control-label col-md-8">Địa điểm hiện tại</label>
-
-                                <div class="col-md-10">
-                                    <label class="control-label col-md-8">Nhà</label>
-                                    <input type="text" name="CurrentHouse" id="current-house" value="@Model.House.Name" disabled />
-                                </div>
-
-                                <div class="col-md-10">
-                                    <label class="control-label col-md-8">Phòng</label>
-                                    <input type="text" name="CurrentRoom" id="current-room" value="@Model.Name" disabled />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            =>
-                        </div>
-                        <div class="col-5">
-                            <h4>Địa điểm mới</h4>
-
-                            <div class="form-group">
-                                <label class="control-label col-md-8" for="ItemStatusId">Nhà mới</label>
-                                <div class="col-md-10">
-                                    @Html.DropDownList("NewHouse", (MultiSelectList)ViewBag.House)
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label col-md-8" for="ItemStatusId">Phòng mới</label>
-                                <div class="col-md-10">
-                                    <select id="NewRoom" name="NewRoom">
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label col-md-8" for="Description">Ghi chú</label>
-                                <div class="col-md-10">
-                                    <input type="text" name="Description" value="" />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <label class="control-label col-md-8">Đính kèm ảnh</label>
-                                <div class="col-8">
-                                    <input class="media-img form-control" type="file" name="files" />
-                                </div>
-                                <div class="col-4">
-                                    <button type="button" class="clear-media btn btn-warning right">Xóa</button>
-                                </div>
-                            </div>
-
-                            <div class="preview">
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-6">
-                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    </div>
-                    <div class="col-md-4"></div>
-                </div>
-            }
-        </div>
-    </div>
-</div>
 
 @section Scripts
 {
     <script>
-        $('#changeStatusModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var recipient = button.data('id')
-            if (recipient == null) {
-                var modal = $(this)
-                modal.find('#current-status').val('')
-                modal.find('#item-id').val('')
-                modal.find('#current-status').val('')
-            } else {
-                var modal = $(this)
-                modal.find('#item-id').attr("value", recipient)
-                modal.find('#current-status-id').attr("value", button.data('stid'))
-                modal.find('#current-status').val(button.data('status'))
-            }
-        })
-
-        $('#changePlaceModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var recipient = button.data('id')
-            if (recipient == null) {
-                var modal = $(this)
-                modal.find('#item-id').val('')
-            } else {
-                var modal = $(this)
-                modal.find('#item-id').attr("value", recipient)
-            }
-        })
 
         $('#change-history').click(function () {
             var url = "@Url.Action("GetHistory","Rooms")";

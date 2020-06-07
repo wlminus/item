@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -12,11 +13,14 @@ namespace WebApplication1.Controllers
     public class HomeController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View(db.Houses.ToList());
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Index(string query)
         {
@@ -26,6 +30,7 @@ namespace WebApplication1.Controllers
         }
 
 
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -58,7 +63,7 @@ namespace WebApplication1.Controllers
             return View(viewModel);
         }
 
-
+        [AllowAnonymous]
         public ActionResult RoomDetails(int? id)
         {
             if (id == null)
@@ -84,7 +89,21 @@ namespace WebApplication1.Controllers
         }
 
 
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Rent(int? id)
+        {
+            var username = User.Identity.GetUserName();
+            var rentroom = db.Rooms.Where(r => r.Id == id).SingleOrDefault();
 
+            rentroom.RentUser = username;
+            rentroom.Verified = false;
+
+            db.SaveChanges();
+
+            return View();
+        }
 
         //public ActionResult About()
         //{
@@ -100,10 +119,11 @@ namespace WebApplication1.Controllers
         //    return View();
         //}
 
-        //public ActionResult Admin()
-        //{
-        //    return View();
-        //}
+        [Authorize]
+        public ActionResult Admin()
+        {
+            return View();
+        }
 
         protected override void Dispose(bool disposing)
         {

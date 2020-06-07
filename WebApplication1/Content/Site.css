@@ -11,11 +11,13 @@
 
 .content-house {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .house-item {
     color: #000000;
-    max-width: 30%;
+    width: 30%;
     border: solid 0.5px #c2c2c2;
     padding: 5px;
     margin: 10px;

@@ -19,6 +19,7 @@ namespace WebApplication1.Controllers
 
         UserManager<ApplicationUser> UserManager { get; set; }
         RoleManager<IdentityRole> RoleManager { get; set; }
+        private ApplicationSignInManager _signInManager;
 
         public UsersController()
         {
@@ -26,39 +27,50 @@ namespace WebApplication1.Controllers
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             RoleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
         }
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
 
-        //public async Task<ActionResult> Migrate()
-        //{
-        //    var store = new RoleStore<IdentityRole>(context);
-        //    var manager = new RoleManager<IdentityRole>(store);
+        public async Task<ActionResult> Migrate()
+        {
+            var store = new RoleStore<IdentityRole>(context);
+            var manager = new RoleManager<IdentityRole>(store);
 
-        //    // RoleTypes is a class containing constant string values for different roles
-        //    List<IdentityRole> identityRoles = new List<IdentityRole>();
-        //    identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_ADMIN });
-        //    identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_MANAGER });
-        //    identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_USER });
+            // RoleTypes is a class containing constant string values for different roles
+            List<IdentityRole> identityRoles = new List<IdentityRole>();
+            identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_ADMIN });
+            identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_MANAGER });
+            identityRoles.Add(new IdentityRole() { Name = RolesType.ROLE_USER });
 
-        //    foreach (IdentityRole role in identityRoles)
-        //    {
-        //        manager.Create(role);
-        //    }
-        //    var UserManager2 = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            foreach (IdentityRole role in identityRoles)
+            {
+                manager.Create(role);
+            }
+            var UserManager2 = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
-        //    ApplicationUser admin = new ApplicationUser
-        //    {
-        //        Email = "admin@admin.com",
-        //        UserName = "admin@admin.com",
-        //        FirstName = "admin",
-        //        LastName = "admin"
-        //    };
+            ApplicationUser admin = new ApplicationUser
+            {
+                Email = "admin@admin.com",
+                UserName = "admin@admin.com",
+                FirstName = "admin",
+                LastName = "admin"
+            };
 
-        //    var result = await UserManager2.CreateAsync(admin, "AAssdd12@123");
+            var result = await UserManager2.CreateAsync(admin, "AAssdd12@123");
 
-        //    if (result.Succeeded)
-        //        result = UserManager2.AddToRole(admin.Id, RolesType.ROLE_ADMIN);
+            if (result.Succeeded)
+                result = UserManager2.AddToRole(admin.Id, RolesType.ROLE_ADMIN);
 
-        //    return View();
-        //}
+            return View();
+        }
         public ActionResult Index()
         {
             var roles = RoleManager.Roles.ToList();
@@ -131,6 +143,146 @@ namespace WebApplication1.Controllers
                 return RedirectToAction("Index");
             }
             return View(createUser);
+        }
+
+        [Authorize]
+        public ActionResult Me()
+        {
+            var userName = User.Identity.GetUserName();
+            var user = context.Users.Include(u => u.Avatar).First(u => u.UserName == userName);
+            var model = new EditUserViewModel(user);
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult Me(EditUserViewModel model)
+        {
+            Media medias = new Media();
+            for (int i = 0; i < Request.Files.Count; i++)
+            {
+                var file = Request.Files[i];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    Media fileDetail = new Media()
+                    {
+                        Media_Name = fileName,
+                        Media_Extension = Path.GetExtension(fileName),
+                        Id = Guid.NewGuid()
+                    };
+                    medias = fileDetail;
+
+                    var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                    file.SaveAs(path);
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = context.Users.First(u => u.UserName == model.UserName);
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                if (medias.Id != Guid.Empty)
+                {
+                    user.Avatar = medias;
+                }
+
+                context.SaveChanges();
+                return RedirectToAction("Admin", "Home");
+            }
+            
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [Authorize]
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                if (user != null)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                }
+                return RedirectToAction("Admin", "Home");
+            }
+            return View(model);
+        }
+
+
+        [Authorize]
+        public ActionResult Edit(string id)
+        {
+            var user = context.Users.Include(u => u.Avatar).Where(u => u.Id == id).FirstOrDefault();
+            var model = new EditUserViewModel(user);
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(EditUserViewModel model)
+        {
+            Media medias = new Media();
+            for (int i = 0; i < Request.Files.Count; i++)
+            {
+                var file = Request.Files[i];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    Media fileDetail = new Media()
+                    {
+                        Media_Name = fileName,
+                        Media_Extension = Path.GetExtension(fileName),
+                        Id = Guid.NewGuid()
+                    };
+                    medias = fileDetail;
+
+                    var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                    file.SaveAs(path);
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = context.Users.First(u => u.UserName == model.UserName);
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                if (medias.Id != Guid.Empty)
+                {
+                    user.Avatar = medias;
+                }
+
+                context.SaveChanges();
+                return RedirectToAction("Admin", "Home");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
         }
     }
 }

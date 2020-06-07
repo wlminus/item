@@ -5,42 +5,71 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Danh sách yêu cầu</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            Thuộc nhà
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Type)
+            Tên phòng
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Rent_User_Id)
+            Loại phòng
+        </th>
+        <th>
+            Người đăng kí thuê
+        </th>
+        <th>
+            Trạng thái
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rent_User_Id)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Houses/Details/@item.HouseId">
+                    <p>@item.House.Name</p>
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RentUser)
+            </td>
+            <td>
+                @if (item.Verified == false)
+                {
+                    if (item.RentUser == null)
+                    {
+                        <p class="text-warning">Chưa có đăng kí</p>
+                    }
+                    else
+                    {
+                        <p class="text-danger">Chưa duyệt</p>
+                    }
+                }
+                else
+                {
+                    <p class="text-success">Đã duyệt</p>
+                }
+            </td>
+            <td>
+                @*<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal" data-id="@item.Id">
+                    Từ chối
+                </button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal" data-id="@item.Id">
+                    Phê duyệt
+                </button>*@
+            </td>
+        </tr>
+    }
 
 </table>

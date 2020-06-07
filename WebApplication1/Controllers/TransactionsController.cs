@@ -50,6 +50,7 @@ namespace WebApplication1.Controllers
             {
                 HistoryVM tmp = new HistoryVM()
                 {
+                    Id = trasn.Id,
                     Date = trasn.Date,
                     ItemId = trasn.ItemId,
 

@@ -1,0 +1,152 @@
+﻿@model IEnumerable<WebApplication1.Models.Room>
+
+@{
+    ViewBag.Title = "Uncheck";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Danh sách đăng kí thuê</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Thuộc nhà
+        </th>
+        <th>
+            Tên phòng
+        </th>
+        <th>
+            Loại phòng
+        </th>
+        <th>
+            Người đăng kí thuê
+        </th>
+        <th>
+            Trạng thái
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Houses/Details/@item.HouseId">
+                    <p>@item.House.Name</p>
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RentUser)
+            </td>
+            <td>
+                @if (item.Verified == false)
+                {
+                    <p class="text-danger">Chưa duyệt</p>
+                }
+                else
+                {
+                    <p class="text-success">Đã duyệt</p>
+                }
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal" data-id="@item.Id">
+                    Từ chối
+                </button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal" data-id="@item.Id">
+                    Phê duyệt
+                </button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<!-- dec -->
+<div class="modal fade" id="declineModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("Decline", "Rooms", FormMethod.Post))
+            {
+                <input data-val="true" id="r-id" name="Id" type="hidden" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Từ chối yêu cầu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <p class="text-danger">Từ chối yêu cầu?</p> 
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Từ chối" class="btn btn-danger" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- accept -->
+<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("Accept", "Rooms", FormMethod.Post))
+            {
+                <input data-val="true" id="r-id" name="Id" type="hidden" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Phê duyệt yêu cầu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <p class="text-success">Phê duyệt yêu cầu</p>
+                </div>
+                <div class="modal-footer row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Phê duyệt" class="btn btn-success" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        $('#acceptModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            var modal = $(this)
+            modal.find('#r-id').attr("value", recipient);
+        })
+
+        $('#declineModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('id')
+            var modal = $(this)
+            modal.find('#r-id').attr("value", recipient);
+        })
+
+    </script>
+
+}

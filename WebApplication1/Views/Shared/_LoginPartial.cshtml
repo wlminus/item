@@ -1,13 +1,13 @@
 ﻿@using Microsoft.AspNet.Identity
 @if (Request.IsAuthenticated)
 {
-    using (Html.BeginForm("Đăng xuất", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
     @Html.AntiForgeryToken()
 
     <ul class="nav navbar-nav navbar-right">
         <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Me", "Users", routeValues: null, htmlAttributes: new { title = "Manage" })
         </li>
         &nbsp;
         &nbsp;
@@ -18,9 +18,14 @@
 else
 {
 <ul class="nav navbar-nav navbar-right">
-    <li>@Html.ActionLink("Đăng kí", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+    <li>@Html.ActionLink("Đăng kí", "HomeRegister", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
     &nbsp;
     &nbsp;
     <li>@Html.ActionLink("Đăng nhập", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
 </ul>
 }
+
+@*@if (User.IsInRole("ROLE_ADMIN"))
+{
+    <p>Admin day</p>
+}*@

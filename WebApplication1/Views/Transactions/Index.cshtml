@@ -15,7 +15,7 @@
                 <input type="text" id="SearchString" name="SearchString" />
 
                 <input type="submit" id="search-btn" value="Tìm kiếm" class="btn btn-primary" />
-                <a class="btn btn-success" href="@Url.Action("Index", "Wards")">Tải lại</a>
+                <a class="btn btn-success" href="@Url.Action("Index", "Transactions")">Tải lại</a>
             </div>
         }
     </div>
@@ -71,24 +71,24 @@
                 @Html.DisplayFor(modelItem => item.Item)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FromHouseId)
+                @Html.DisplayFor(modelItem => item.FromHouse)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FromRoomId)
+                @Html.DisplayFor(modelItem => item.FromRoom)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FromStatusId)
+                @Html.DisplayFor(modelItem => item.FromStatus)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ToHouseId)
+                @Html.DisplayFor(modelItem => item.ToHouse)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ToRoomId)
+                @Html.DisplayFor(modelItem => item.ToRoom)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ToStatusId)
+                @Html.DisplayFor(modelItem => item.ToStatus)
             </td>
-            <td>
+            <td width="20%">
                 @if (item.Media != null)
                 {
                     <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Media.Id + item.Media.Media_Extension)&d=@item.Media.Media_Name" />
@@ -99,15 +99,30 @@
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsVerified)
+                @if (item.IsVerified == false)
+                {
+                    <p class="text-danger">Chưa duyệt</p>
+                }
+                else
+                {
+                    <p class="text-success">Đã duyệt</p>
+                }
             </td>
             <td>
+                @if (item.IsVerified == false)
+                {
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal" data-id="@item.Id">
+                        Từ chối
+                    </button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal" data-id="@item.Id">
+                        Phê duyệt
+                    </button>
+                }
             </td>
         </tr>
     }
 
 </table>
-
 
 
 
@@ -148,61 +163,6 @@
     </div>
 </div>
 
-<!-- Modal Create ItemStatus -->
-<div class="modal fade" id="wardModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-
-        <div class="modal-content">
-            @using (Html.BeginForm("Add", "Wards", FormMethod.Post))
-            {
-                <input data-val="true" id="province-id" name="Id" type="hidden" />
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Thêm mới Phường/Xã</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    @Html.AntiForgeryToken()
-                    <div class="form-group">
-                        <label class="control-label col-md-2" for="Name">Tên</label>
-                        <div class="col-md-10">
-                            <input type="text" id="Name" name="Name" class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-md-2" for="Status">Loại</label>
-                        <div class="col-md-10">
-                            <select name="Type" class="form-control">
-                                <option value="Phường">Phường</option>
-                                <option value="Xã">Xã</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-md-2" for="Status">Quận/Huyện</label>
-                        <div class="col-md-10">
-                            @Html.DropDownList("District", (MultiSelectList)ViewBag.District)
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-6">
-                        <input type="submit" value="Lưu lại" class="btn btn-primary" />
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    </div>
-                    <div class="col-md-4"></div>
-                </div>
-            }
-        </div>
-    </div>
-</div>
 
 @section Scripts
 {

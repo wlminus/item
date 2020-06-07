@@ -703,6 +703,7 @@
                 type: "GET",
                 url: url + '?id=' + itemId,
                 success: function (res) {
+                    $('#history-table').html('');
                     for (var i = 0; i < res.length; i++) {
                         let img = '';
                         if (res[i].Media) {

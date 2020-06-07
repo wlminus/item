@@ -43,7 +43,6 @@ namespace WebApplication1.Models
             this.Description = house.Description;
             this.Room_Count = house.Room_Count;
             this.Status = house.Status;
-            this.Rent_User_Id = house.Rent_User_Id;
             this.Medias = house.Medias;
             this.Rooms = house.Rooms;
             this.Items = house.Items;

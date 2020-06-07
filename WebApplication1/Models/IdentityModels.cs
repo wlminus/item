@@ -23,6 +23,19 @@ namespace WebApplication1.Models
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
+            if (this.Avatar != null)
+            {
+                userIdentity.AddClaim(new Claim("avatar_id", this.Avatar.Id.ToString()));
+                userIdentity.AddClaim(new Claim("avatar_name", this.Avatar.Media_Name));
+                userIdentity.AddClaim(new Claim("avatar_ext", this.Avatar.Media_Extension));
+            } else
+            {
+                userIdentity.AddClaim(new Claim("avatar_id", ""));
+                userIdentity.AddClaim(new Claim("avatar_name", ""));
+                userIdentity.AddClaim(new Claim("avatar_ext", ""));
+            }
+            
+
             return userIdentity;
         }
     }

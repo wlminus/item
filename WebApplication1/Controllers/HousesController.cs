@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -21,6 +22,21 @@ namespace WebApplication1.Controllers
         public ActionResult Index()
         {
             return View(db.Houses.ToList());
+        }
+
+        [Authorize(Roles = "ROLE_USER")]
+        public ActionResult Me()
+        {
+            var userName = User.Identity.GetUserName();
+            List<House> lstHouseRented = new List<House>();
+
+            var lstRoomRnt = db.Rooms.Where(r => r.RentUser == userName).ToList();
+            foreach(var rm in lstRoomRnt)
+            {
+                var tmp = db.Houses.Find(rm.HouseId);
+                lstHouseRented.Add(tmp);
+            }
+            return View(lstHouseRented);
         }
 
         [HttpPost]
@@ -256,20 +272,40 @@ namespace WebApplication1.Controllers
             TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
             long secondsSinceEpoch = (long)t.TotalSeconds;
 
-            Transaction transaction = new Transaction
+            Transaction transaction;
+            if (medias.Id != Guid.Empty)
             {
-                Date = secondsSinceEpoch,
-                ItemId = itemId,
-                Description = formCollection["Description"],
-                FromHouseId = 0,
-                FromRoomId = 0,
-                ToHouseId = 0,
-                ToRoomId = 0,
-                FromStatusId = long.Parse(formCollection["Current-Status-Id"]),
-                ToStatusId = long.Parse(formCollection["NewStatus"]),
-                Media = medias,
-                IsVerified = true
-            };
+                transaction = new Transaction
+                {
+                        Date = secondsSinceEpoch,
+                    ItemId = itemId,
+                    Description = formCollection["Description"],
+                    FromHouseId = 0,
+                    FromRoomId = 0,
+                    ToHouseId = 0,
+                    ToRoomId = 0,
+                    FromStatusId = long.Parse(formCollection["Current-Status-Id"]),
+                    ToStatusId = long.Parse(formCollection["NewStatus"]),
+                    Media = medias,
+                    IsVerified = true
+                };
+            } else
+            {
+                transaction = new Transaction
+                {
+                    Date = secondsSinceEpoch,
+                    ItemId = itemId,
+                    Description = formCollection["Description"],
+                    FromHouseId = 0,
+                    FromRoomId = 0,
+                    ToHouseId = 0,
+                    ToRoomId = 0,
+                    FromStatusId = long.Parse(formCollection["Current-Status-Id"]),
+                    ToStatusId = long.Parse(formCollection["NewStatus"]),
+                    IsVerified = true
+                };
+            }
+                    
 
             db.Transactions.Add(transaction);
             db.SaveChanges();
