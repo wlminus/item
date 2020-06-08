@@ -11,10 +11,13 @@
     </div>
     <div class="col-6">
         <a class="btn btn-secondary" href="@Url.Action("Index", "Houses")">Trở về</a>
-        <a class="btn btn-primary" href="@Url.Action("Edit", "Houses", new { id = Model.Id })">Chỉnh sửa</a>
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
-            Xóa
-        </button>
+        @if (User.IsInRole("ROLE_ADMIN") || User.IsInRole("ROLE_MANAGER"))
+        {
+            <a class="btn btn-primary" href="@Url.Action("Edit", "Houses", new { id = Model.Id })">Chỉnh sửa</a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                Xóa
+            </button>
+        }
     </div>
 </div>
 
@@ -95,9 +98,12 @@
 <h4>Thông tin phòng</h4>
 <div class="row"></div>
 <!-- Button trigger modal -->
+@if (User.IsInRole("ROLE_ADMIN") || User.IsInRole("ROLE_MANAGER"))
+{
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#roomModal">
     Thêm mới phòng
 </button>
+}
 <hr />
 
 <div class="room-wrap">
@@ -130,7 +136,10 @@
                 </td>
                 <td>
                     <a class="btn btn-primary" href="@Url.Action("Details", "Rooms", new { id = @item.Id })">Chi tiết</a>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteRoomModal" data-id="@item.Id">Xóa</button>
+                    @if (User.IsInRole("ROLE_ADMIN") || User.IsInRole("ROLE_MANAGER"))
+                    {
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteRoomModal" data-id="@item.Id">Xóa</button>
+                    }
                 </td>
             </tr>
         }
@@ -245,9 +254,12 @@
 
 
 <h4>Thông tin đồ trong nhà</h4>
+@if (User.IsInRole("ROLE_ADMIN") || User.IsInRole("ROLE_MANAGER"))
+{
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemCreateModal">
     Thêm mới tài sản
 </button>
+}
 <hr />
 
 <div class="room-wrap">
@@ -297,12 +309,19 @@
                     <p class="date-server">@item.AddedDate</p>
                 </td>
                 <td>
-                    <a class="btn btn-info" href="@Url.Action("Edit", "ItemInHouses", new { id = @item.Id })">Sửa thông tin</a>
+                    @if (User.IsInRole("ROLE_ADMIN") || User.IsInRole("ROLE_MANAGER"))
+                    {
+                        <a class="btn btn-info" href="@Url.Action("Edit", "ItemInHouses", new { id = @item.Id })">Sửa thông tin</a>
+                    }
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#changeStatusModal" data-stid="@item.Status.Id" data-status="@item.Status.Status" data-id="@item.Id">Đổi trạng thái</button>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#changePlaceModal" data-id="@item.Id">Đổi địa điểm</button>
                     @*<a class="btn btn-primary" href="@Url.Action("Edit", "ItemStatus", new { id = Model.Id })">Thay đổi trạng thái</a>*@
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
+                    @if (User.IsInRole("ROLE_ADMIN") || User.IsInRole("ROLE_MANAGER"))
+                    {
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteFormModal" data-id="@item.Id">Xóa</button>
+                    }
+                    
                 </td>
             </tr>
         }

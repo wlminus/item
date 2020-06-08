@@ -4,14 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Edit</h2>
+<h2>Sửa thông tin</h2>
 
 @using (Html.BeginForm("Me", "Users", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>EditUserViewModel</h4>
         <hr />
         @Html.ValidationSummary(true)
         <div class="row">

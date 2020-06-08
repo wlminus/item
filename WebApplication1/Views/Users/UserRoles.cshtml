@@ -1,0 +1,53 @@
+﻿@model WebApplication1.Models.SelectUserRolesViewModel
+@{
+    ViewBag.Title = "UserRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Đổi vai trò</h2>
+
+
+<h2>Quyền của user: @Html.DisplayFor(model => model.UserName)</h2>
+<hr />
+
+@using (Html.BeginForm("UserRoles", "Users", FormMethod.Post, new { encType = "multipart/form-data", name = "myform" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.UserName)
+            </div>
+        </div>
+
+        <br />
+        <hr />
+
+        <table>
+            <tr>
+                <th>
+                    Chọn quyền
+                </th>
+                <th>
+                </th>
+            </tr>
+            
+            @Html.DropDownList("DDLTest", (SelectList)ViewBag.lstRole, new { multiple = "multiple" })
+        </table>
+        <br />
+        <hr />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Lưu" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Trở về", "Index")
+</div>
+

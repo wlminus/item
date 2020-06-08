@@ -72,9 +72,9 @@
                 }
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Roles", "UserRoles", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @Html.ActionLink("Sửa", "Edit", new { id = item.UserName.Replace(".","~") }) |
+                @Html.ActionLink("Vai trò", "UserRoles", new { id = item.UserName.Replace(".", "~") }) |
+                @Html.ActionLink("Xóa", "Delete", new { id = item.UserName.Replace(".", "~") })
             </td>
         </tr>
     }

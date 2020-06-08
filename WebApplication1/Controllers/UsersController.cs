@@ -13,6 +13,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize(Roles = "ROLE_ADMIN")]
     public class UsersController : Controller
     {
         ApplicationDbContext context;
@@ -233,7 +234,8 @@ namespace WebApplication1.Controllers
         [Authorize]
         public ActionResult Edit(string id)
         {
-            var user = context.Users.Include(u => u.Avatar).Where(u => u.Id == id).FirstOrDefault();
+            var realUserName = id.Replace("~", ".");
+            var user = context.Users.Include(u => u.Avatar).Where(u => u.UserName == realUserName).FirstOrDefault();
             var model = new EditUserViewModel(user);
 
             return View(model);
@@ -283,6 +285,66 @@ namespace WebApplication1.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        public ActionResult UserRoles(string id)
+        {
+            var realUserName = id.Replace("~", ".");
+            var Db = new ApplicationDbContext();
+
+            ViewBag.lstRole = new SelectList(Db.Roles.ToList(), "Name", "Name");
+            
+            var user = Db.Users.First(u => u.UserName == realUserName);
+            var model = new SelectUserRolesViewModel(user);
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UserRoles(string[] DDLTest, SelectUserRolesViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var idManager = new IdentityManager();
+                var Db = new ApplicationDbContext();
+                var user = Db.Users.First(u => u.UserName == model.UserName);
+                idManager.ClearUserRoles(user.Id);
+
+                foreach (var role in DDLTest)
+                {
+                     idManager.AddUserToRole(user.Id, role);
+                }
+                return RedirectToAction("index");
+            }
+            return View();
+        }
+
+        public ActionResult Delete(string id = null)
+        {
+            var realUserName = id.Replace("~", ".");
+            var Db = new ApplicationDbContext();
+            var user = Db.Users.First(u => u.UserName == realUserName);
+            var model = new EditUserViewModel(user);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(model);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult DeleteConfirmed(string id)
+        {
+            var realUserName = id.Replace("~", ".");
+            var Db = new ApplicationDbContext();
+            var user = Db.Users.First(u => u.UserName == realUserName);
+            Db.Users.Remove(user);
+            Db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

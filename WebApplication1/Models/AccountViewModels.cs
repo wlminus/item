@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace WebApplication1.Models
 {
@@ -231,19 +232,17 @@ namespace WebApplication1.Models
             var allRoles = Db.Roles;
             foreach(var role in allRoles)
             {
-                // An EditorViewModel will be used by Editor Template:
                 var rvm = new SelectRoleEditorViewModel(role);
+                if (user.Roles.Where(r => r.RoleId == role.Id).Count() > 0) 
+                {
+                    rvm.Selected = true;   
+                } else
+                {
+                    rvm.Selected = false;
+                }
                 this.Roles.Add(rvm);
             }
-  
-            // Set the Selected property to true for those roles for 
-            // which the current user is a member:
-            foreach(var userRole in user.Roles)
-            {
-                var checkUserRole = 
-                    this.Roles.Find(r => r.RoleName == userRole.RoleId);
-                checkUserRole.Selected = true;
-            }
+ 
         }
   
         public string UserName { get; set; }
