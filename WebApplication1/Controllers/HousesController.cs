@@ -14,6 +14,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize(Roles = "ROLE_ADMIN")]
     public class HousesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -71,7 +72,14 @@ namespace WebApplication1.Controllers
             ViewBag.ItemCategories = new MultiSelectList(cat, "Id", "Name");
             var hause = db.Houses.ToList();
             ViewBag.House = new MultiSelectList(hause, "Id", "Name");
-
+            var roomInThatHouse = db.Rooms.Where(r => r.HouseId == id).ToList();
+            var fakeHouse = new Room()
+            {
+                Id = 0,
+                Name = "Thêm tài sản trong nhà"
+            };
+            roomInThatHouse.Add(fakeHouse);
+            ViewBag.RoomInHouse = new MultiSelectList(roomInThatHouse, "Id", "Name");
 
             if (house == null)
             {
@@ -151,25 +159,49 @@ namespace WebApplication1.Controllers
             }
 
             long houseId = long.Parse(formCollection["House-Id"]);
+            long rooomId = long.Parse(formCollection["Rum"]);
 
-            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-            long secondsSinceEpoch = (long)t.TotalSeconds;
-
-            ItemInHouse item = new ItemInHouse
+            if(rooomId == 0)
             {
-                Name = formCollection["ItemName"],
-                Description = formCollection["ItemDescription"],
-                HouseId = houseId,
-                ItemCategoryId = long.Parse(formCollection["ItemCategoryId"]),
-                StatusId = long.Parse(formCollection["ItemStatusId"]),
-                Medias = medias,
-                AddedDate = secondsSinceEpoch
-            };
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                long secondsSinceEpoch = (long)t.TotalSeconds;
 
-            db.ItemInHouses.Add(item);
-            db.SaveChanges();
+                ItemInHouse item = new ItemInHouse
+                {
+                    Name = formCollection["ItemName"],
+                    Description = formCollection["ItemDescription"],
+                    HouseId = houseId,
+                    ItemCategoryId = long.Parse(formCollection["ItemCategoryId"]),
+                    StatusId = long.Parse(formCollection["ItemStatusId"]),
+                    Medias = medias,
+                    AddedDate = secondsSinceEpoch
+                };
 
-            return RedirectToAction("Details", new { id = houseId });
+                db.ItemInHouses.Add(item);
+                db.SaveChanges();
+
+                return RedirectToAction("Details", new { id = houseId });
+            } else
+            {
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                long secondsSinceEpoch = (long)t.TotalSeconds;
+
+                ItemInRoom item = new ItemInRoom
+                {
+                    Name = formCollection["ItemName"],
+                    Description = formCollection["ItemDescription"],
+                    RoomId = rooomId,
+                    ItemCategoryId = long.Parse(formCollection["ItemCategoryId"]),
+                    StatusId = long.Parse(formCollection["ItemStatusId"]),
+                    Medias = medias,
+                    AddedDate = secondsSinceEpoch
+                };
+
+                db.ItemInRooms.Add(item);
+                db.SaveChanges();
+
+                return RedirectToAction("Details", new { id = houseId });
+            } 
         }
 
         public JsonResult GetRoomByHouse(int? id)

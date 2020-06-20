@@ -35,6 +35,12 @@
     height: auto;
 }
 
+.main-house-thumb-img {
+    width: 100%;
+    max-height: 200px;
+    overflow: hidden;
+}
+
 .house-content {
     padding-top: 15px;
 }

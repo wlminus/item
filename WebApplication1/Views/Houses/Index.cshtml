@@ -47,11 +47,11 @@
                 <div class="house-thumb">
                     @if (item.Medias.Count > 0)
                     {
-                        <img class="house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
+                        <img class="main-house-thumb-img" src="~/Media/Files/?p=@(item.Medias.ElementAt(0).Id + item.Medias.ElementAt(0).Media_Extension)&d=@item.Medias.ElementAt(0).Media_Name" />
                     }
                     else
                     {
-                        <img class="house-thumb-img" src="~/Media/Files/?p=default.jpg&d=default" />
+                        <img class="main-house-thumb-img" src="~/Media/Files/?p=default.jpg&d=default" />
                     }
                 </div>
                 <div class="row house-content">
