@@ -14,12 +14,12 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize(Roles = "ROLE_ADMIN")]
+    
     public class HousesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Houses
+        [Authorize(Roles = "ROLE_ADMIN")]
         public ActionResult Index()
         {
             return View(db.Houses.ToList());
@@ -31,7 +31,7 @@ namespace WebApplication1.Controllers
             var userName = User.Identity.GetUserName();
             List<House> lstHouseRented = new List<House>();
 
-            var lstRoomRnt = db.Rooms.Where(r => r.RentUser == userName).ToList();
+            var lstRoomRnt = db.Rooms.Where(r => r.RentUser == userName && r.Verified == true).ToList();
             foreach(var rm in lstRoomRnt)
             {
                 var tmp = db.Houses.Find(rm.HouseId);
@@ -40,6 +40,7 @@ namespace WebApplication1.Controllers
             return View(lstHouseRented);
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         public ActionResult Index(string query)
         {
@@ -48,7 +49,7 @@ namespace WebApplication1.Controllers
             return View(data);
         }
 
-        // GET: Houses/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -88,6 +89,7 @@ namespace WebApplication1.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddRoom(FormCollection formCollection)
@@ -133,6 +135,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Details", new { id = houseId });
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddItem(FormCollection formCollection)
@@ -204,6 +207,7 @@ namespace WebApplication1.Controllers
             } 
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         public JsonResult GetRoomByHouse(int? id)
         {
             var data = db.Rooms.Where(r => r.HouseId == id).ToList();
@@ -219,6 +223,8 @@ namespace WebApplication1.Controllers
             }
             return Json(vm, JsonRequestBehavior.AllowGet);
         }
+        
+        [Authorize(Roles = "ROLE_ADMIN")]
         public JsonResult GetHistory(int? id)
         {
             var listHistory = db.Transactions.Where(i => i.ItemId == id).OrderBy(k => k.Date).ToList();
@@ -266,6 +272,7 @@ namespace WebApplication1.Controllers
             return Json(vmData, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ChangeItemStatus(FormCollection formCollection)
@@ -350,6 +357,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Details", new { id = houseId });
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ChangeItemPlace(FormCollection formCollection)
@@ -451,6 +459,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Details", new { id = houseId });
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteHouse(int? id)
         {
@@ -460,6 +469,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteRoom(int? id)
         {
@@ -477,6 +487,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Details", new { id = houseId });
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteItem(int? id)
         {
@@ -493,9 +504,7 @@ namespace WebApplication1.Controllers
         }
 
 
-
-
-        // GET: Houses/Create
+        [Authorize(Roles = "ROLE_ADMIN")]
         public ActionResult Create()
         {
             var listTinh = db.Provinces.ToList();
@@ -503,12 +512,14 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         public JsonResult GetDistricByProvince(string name)
         {
             var data = db.Districts.Include(c => c.Province).Where(r => r.Province.Name == name).ToList();
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         public JsonResult GetWardByDistric(string name)
         {
             var data = db.Wards.Include(c => c.District).Where(r => r.District.Name == name).ToList();
@@ -516,9 +527,7 @@ namespace WebApplication1.Controllers
         }
 
 
-        // POST: Houses/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Location,District,Province,Description,Room_Count,Status,Rent_User_Id")] House house)
@@ -557,7 +566,7 @@ namespace WebApplication1.Controllers
             return View(house);
         }
 
-        // GET: Houses/Edit/5
+        [Authorize(Roles = "ROLE_ADMIN")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -572,9 +581,7 @@ namespace WebApplication1.Controllers
             return View(house);
         }
 
-        // POST: Houses/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Location,District,Province,Description,Room_Count,Status,Rent_User_Id")] House house)
@@ -603,9 +610,9 @@ namespace WebApplication1.Controllers
         //    return View(house);
         //}
 
-        
 
-        // POST: Houses/Delete/5
+
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

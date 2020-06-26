@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "Status";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Xuất báo cáo</h2>
+
+@{Html.BeginForm("CreateStatusReport", "Report", FormMethod.Get);
+    {
+        <p>Báo cáo trạng thái</p>
+        <div>
+            @Html.DropDownList("ItemStatus", (MultiSelectList)ViewBag.ItemStatus)
+            <input type="submit" value="Xuất báo cáo" style="width:150px;height:27px" />
+        </div>
+    }
+    Html.EndForm();
+}

@@ -2,6 +2,7 @@
 using Syncfusion.XlsIO;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Web;
@@ -24,7 +25,14 @@ namespace WebApplication1.Controllers
             return View();
         }
 
-        public String CreateReport()
+		public ActionResult Status()
+		{
+			var listStt = db.ItemStatuses.ToList();
+			ViewBag.ItemStatus = new MultiSelectList(listStt, "Id", "Status");
+			return View();
+		}
+
+		public String CreateReport()
         {
 			using (ExcelEngine excelEngine = new ExcelEngine())
 			{
@@ -135,6 +143,111 @@ namespace WebApplication1.Controllers
 					worksheet.Range[cot8].Text = trans.ToStatus;
 
 					worksheet.Range[cot9].Text = trans.Description;
+					current++;
+				}
+				var cotcuoi = "A8:" + "I" + current.ToString();
+				//Apply borders
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeTop].Color = ExcelKnownColors.Grey_25_percent;
+				worksheet.Range[cotcuoi].CellStyle.Borders[ExcelBordersIndex.EdgeBottom].Color = ExcelKnownColors.Grey_25_percent;
+
+
+				//Apply row height and column width to look good
+				worksheet.Range["A1"].ColumnWidth = 22;
+				worksheet.Range["B1:H1"].ColumnWidth = 15;
+				worksheet.Range["i1"].ColumnWidth = 20;
+				worksheet.Range["A1"].RowHeight = 47;
+				worksheet.Range["A2"].RowHeight = 15;
+				worksheet.Range["A3:A4"].RowHeight = 15;
+
+				worksheet.Range["A7:I7"].CellStyle.Font.Color = ExcelKnownColors.White;
+				worksheet.Range["A7:I7"].CellStyle.Font.Bold = true;
+				worksheet.Range["A7:I7"].CellStyle.Color = Color.FromArgb(42, 118, 189);
+				worksheet.Range["A7:I7"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+
+				worksheet.Range["A7:I7"].RowHeight = 20;
+
+				//Save the workbook to disk in xlsx format
+				workbook.SaveAs("Report.xlsx", HttpContext.ApplicationInstance.Response, ExcelDownloadType.Open);
+			}
+			return "Done";
+		}
+
+		public String CreateStatusReport(int ItemStatus)
+		{
+			//long sttID = long.Parse(formCollection["ItemStatus"]);
+
+			using (ExcelEngine excelEngine = new ExcelEngine())
+			{
+				IApplication application = excelEngine.Excel;
+
+				application.DefaultVersion = ExcelVersion.Excel2016;
+
+				//Create a workbook
+				IWorkbook workbook = application.Workbooks.Create(1);
+				IWorksheet worksheet = workbook.Worksheets[0];
+				worksheet.IsGridLinesVisible = false;
+
+
+				worksheet.Range["A3"].Text = "Cty TNHH TOAM";
+				worksheet.Range["A4"].Text = "100 Dịch Vọng, Cầu Giấy";
+				worksheet.Range["A5"].Text = "Phone: +84 912-123-456";
+
+				worksheet.Range["A3:A5"].CellStyle.Font.Bold = true;
+
+				worksheet.Range["G1:I1"].Merge();
+
+				worksheet.Range["G1"].Text = "TOAM Report";
+				worksheet.Range["G1"].CellStyle.Font.Bold = true;
+				worksheet.Range["G1"].CellStyle.Font.RGBColor = Color.FromArgb(42, 118, 189);
+				worksheet.Range["G1"].CellStyle.Font.Size = 35;
+
+				//Apply alignment in the cell G1
+				worksheet.Range["G1"].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignRight;
+				worksheet.Range["G1"].CellStyle.VerticalAlignment = ExcelVAlign.VAlignTop;
+
+				worksheet.Range["A7"].Text = "Tên tài sản";
+				worksheet.Range["B7"].Text = "Loại";
+				worksheet.Range["C7"].Text = "Từ nhà";
+				worksheet.Range["D7"].Text = "Từ phòng";
+				worksheet.Range["E7"].Text = "Trạng thái";
+
+				var listItemInHouse = db.ItemInHouses.Where(i => i.StatusId == ItemStatus).ToList();
+				var listItemInroom = db.ItemInRooms.Where(i => i.StatusId == ItemStatus).ToList();
+				var listRoom = db.Rooms.Include(r => r.House).ToList();
+
+				int current = 8;
+				foreach (var it in listItemInHouse)
+				{
+					var cot1 = "A" + current.ToString();
+					var cot2 = "B" + current.ToString();
+					var cot3 = "C" + current.ToString();
+					var cot4 = "D" + current.ToString();
+					var cot5 = "E" + current.ToString();
+
+					worksheet.Range[cot1].Text = it.Name;
+					worksheet.Range[cot2].Text = it.ItemCategory.Name;
+					worksheet.Range[cot3].Text = it.House.Name;
+					worksheet.Range[cot4].Text = "";
+					worksheet.Range[cot5].Text = it.Status.Status;
+
+					current++;
+				}
+				foreach (var it in listItemInroom)
+				{
+					var cot1 = "A" + current.ToString();
+					var cot2 = "B" + current.ToString();
+					var cot3 = "C" + current.ToString();
+					var cot4 = "D" + current.ToString();
+					var cot5 = "E" + current.ToString();
+
+					worksheet.Range[cot1].Text = it.Name;
+					worksheet.Range[cot2].Text = it.ItemCategory.Name;
+					worksheet.Range[cot3].Text = listRoom.Where(r => r.Id == it.RoomId).SingleOrDefault().House.Name;
+					worksheet.Range[cot4].Text = it.Room.Name;
+					worksheet.Range[cot5].Text = it.Status.Status;
+
 					current++;
 				}
 				var cotcuoi = "A8:" + "I" + current.ToString();

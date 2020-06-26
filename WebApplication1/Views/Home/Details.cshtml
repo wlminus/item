@@ -118,10 +118,7 @@
             <th>
                 Trạng thái
             </th>
-            <th>
-                Ngày thêm
-            </th>
-            <th></th>
+            
         </tr>
 
         @foreach (var item in Model.Items)
@@ -146,12 +143,12 @@
                 <td>
                     @item.Status.Status
                 </td>
-                <td>
+                @*<td>
                     <p class="date-server">@item.AddedDate</p>
                 </td>
                 <td>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#historyModal" id="change-history" data-id="@item.Id">Lịch sử thay đổi</button>
-                </td>
+                </td>*@
             </tr>
         }
     </table>

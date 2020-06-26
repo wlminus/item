@@ -439,6 +439,47 @@ namespace WebApplication1.Controllers
             return View(room);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditRoom(FormCollection formCollection)
+        {
+            List<Media> medias = new List<Media>();
+            for (int i = 0; i < Request.Files.Count; i++)
+            {
+                var file = Request.Files[i];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    Media fileDetail = new Media()
+                    {
+                        Media_Name = fileName,
+                        Media_Extension = Path.GetExtension(fileName),
+                        Id = Guid.NewGuid()
+                    };
+                    medias.Add(fileDetail);
+
+                    var path = Path.Combine(Server.MapPath("~/App_Data/Upload/"), fileDetail.Id + fileDetail.Media_Extension);
+                    file.SaveAs(path);
+                }
+            }
+
+            long houseId = long.Parse(formCollection["House-Id"]);
+            long roomId = long.Parse(formCollection["Room-Id"]);
+
+            var data = db.Rooms.Find(roomId);
+
+            data.Medias = medias;
+            data.Name = formCollection["RoomName"];
+            data.Type = formCollection["RoomType"];
+
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = roomId });
+        }
+
+
         // POST: Rooms/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.

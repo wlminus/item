@@ -13,7 +13,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize(Roles = "ROLE_ADMIN")]
+    
     public class UsersController : Controller
     {
         ApplicationDbContext context;
@@ -40,6 +40,7 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         public async Task<ActionResult> Migrate()
         {
             var store = new RoleStore<IdentityRole>(context);
@@ -72,6 +73,8 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+
+        [Authorize(Roles = "ROLE_ADMIN")]
         public ActionResult Index()
         {
             var roles = RoleManager.Roles.ToList();
@@ -97,6 +100,7 @@ namespace WebApplication1.Controllers
             return View(listModel);
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         public ActionResult Create()
         {
             var roles = context.Roles.ToList();
@@ -105,6 +109,7 @@ namespace WebApplication1.Controllers
             return View(NewUser);
         }
 
+        [Authorize(Roles = "ROLE_ADMIN")]
         [HttpPost]
         public ActionResult Create(RegisterModel createUser)
         {
